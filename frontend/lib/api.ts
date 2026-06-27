@@ -144,7 +144,8 @@ export const api = {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
       try {
-        return await publicRequest<Course[]>('/api/public/courses', { signal: controller.signal });
+        const courses = await publicRequest<Course[]>('/api/public/courses', { signal: controller.signal });
+        return courses.map(c => ({ ...c, is_public: c.is_public ?? true }));
       } finally {
         clearTimeout(timeout);
       }

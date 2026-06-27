@@ -9,7 +9,7 @@ const router = Router();
 router.get('/courses', async (_req, res) => {
   try {
     const result = await pool.query(
-      `SELECT c.id, c.title, c.code, c.level, c.description, c.created_at,
+      `SELECT c.id, c.title, c.code, c.level, c.description, c.is_public, c.created_at, c.updated_at,
          COUNT(d.id) FILTER (WHERE d.status = 'ready') AS doc_count,
          split_part(u.email, '@', 1) AS author
        FROM courses c

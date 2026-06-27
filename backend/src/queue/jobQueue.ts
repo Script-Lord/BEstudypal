@@ -20,7 +20,7 @@ export interface DocumentJobData {
   fileName: string;
 }
 
-export const documentQueue = new Queue<DocumentJobData, unknown, 'process'>('document-processing', {
+export const documentQueue = new Queue<DocumentJobData>('document-processing', {
   connection: getRedisConnectionOptions(),
   defaultJobOptions: {
     attempts: 3,
