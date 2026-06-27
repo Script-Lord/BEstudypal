@@ -96,6 +96,12 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
+  createWebSource: (data: { url: string; courseId: string }) =>
+    request<{ id: string; status: string }>('/api/documents/web-source', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   listDocuments: () => request<Document[]>('/api/documents'),
 
   getDocument: (id: string) => request<Document>(`/api/documents/${id}`),

@@ -55,7 +55,7 @@ router.get('/courses/:id', async (req, res) => {
 
 // POST /api/public/courses/:id/chat — stateless RAG for public visitors (no auth, history not saved)
 router.post('/courses/:id/chat', async (req, res) => {
-  const { question } = req.body as { question?: string };
+  const { question, webSearch } = req.body as { question?: string; webSearch?: boolean };
   if (!question?.trim()) return res.status(400).json({ error: 'question is required' });
 
   let course;
@@ -76,7 +76,9 @@ router.post('/courses/:id/chat', async (req, res) => {
     ? chunks.map((c, idx) => `[Source ${idx + 1}]\n${c.content}`).join('\n\n---\n\n')
     : '(No relevant content found in course documents.)';
 
-  const systemPrompt = `You are a public study assistant for "${course.title} (${course.code})". Answer ONLY from the course material excerpts below. Cite source numbers inline, e.g. [Source 1]. If the answer is not in the excerpts, say so.\n\nCOURSE MATERIAL:\n${context}`;
+  const systemPrompt = webSearch
+    ? `You are a public study assistant for "${course.title} (${course.code})". Use the course material excerpts below as your primary source and cite them inline, e.g. [Source 1]. When the excerpts are incomplete, you MAY add relevant, accurate background knowledge to give a fuller answer. Clearly separate that supplementary information under a short heading like "Beyond your sources:" so the reader knows it is not from the course material. Stay focused on what was asked.\n\nCOURSE MATERIAL:\n${context}`
+    : `You are a public study assistant for "${course.title} (${course.code})". Answer ONLY from the course material excerpts below. Cite source numbers inline, e.g. [Source 1]. If the answer is not in the excerpts, say so.\n\nCOURSE MATERIAL:\n${context}`;
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');

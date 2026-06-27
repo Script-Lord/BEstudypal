@@ -43,6 +43,7 @@ export default function CourseDetailPage() {
 
   const { messages, streaming, error: chatError, sendMessage, clearChat } = useCourseChat(courseId, false);
   const [input, setInput] = useState('');
+  const [webSearch, setWebSearch] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -98,7 +99,7 @@ export default function CourseDetailPage() {
     const q = input.trim();
     if (!q || streaming) return;
     setInput('');
-    sendMessage(q);
+    sendMessage(q, webSearch);
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
   };
 
@@ -213,7 +214,11 @@ export default function CourseDetailPage() {
     >
       <ChatPanel
         title="Chat"
-        subtitle={`Searches across ${readyDocs.length} ready ${readyDocs.length === 1 ? 'document' : 'documents'}`}
+        subtitle={
+          webSearch
+            ? `Web + AI on · grounded in ${readyDocs.length} ready ${readyDocs.length === 1 ? 'document' : 'documents'}`
+            : `Searches across ${readyDocs.length} ready ${readyDocs.length === 1 ? 'document' : 'documents'}`
+        }
         messages={messages}
         streaming={streaming}
         error={chatError}
@@ -221,11 +226,17 @@ export default function CourseDetailPage() {
         onInputChange={setInput}
         onSend={handleSend}
         onClear={clearChat}
-        placeholder={readyDocs.length === 0 ? 'Add documents first…' : 'Ask about this course…'}
-        disabled={readyDocs.length === 0}
+        placeholder={
+          readyDocs.length === 0
+            ? webSearch ? 'Ask anything…' : 'Add documents first…'
+            : 'Ask about this course…'
+        }
+        disabled={readyDocs.length === 0 && !webSearch}
         suggestions={readyDocs.length > 0 ? SUGGESTIONS : undefined}
-        onSuggestion={sendMessage}
+        onSuggestion={(s) => sendMessage(s, webSearch)}
         sourceCount={sourceCount}
+        webSearch={webSearch}
+        onToggleWebSearch={setWebSearch}
         textareaRef={textareaRef}
         bottomRef={bottomRef}
       />

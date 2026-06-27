@@ -3,10 +3,16 @@ import FormData from 'form-data';
 import { describeImageBuffer } from './snwolley';
 
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+const TEXT_EXTS = new Set(['.txt', '.md', '.markdown']);
 
 function isImageFile(fileName: string): boolean {
   const ext = '.' + (fileName.split('.').pop()?.toLowerCase() ?? '');
   return IMAGE_EXTS.has(ext);
+}
+
+function isTextFile(fileName: string): boolean {
+  const ext = '.' + (fileName.split('.').pop()?.toLowerCase() ?? '');
+  return TEXT_EXTS.has(ext);
 }
 
 export interface DoclingResult {
@@ -19,6 +25,15 @@ export async function parseDocument(
   fileBuffer: Buffer,
   fileName: string
 ): Promise<DoclingResult> {
+  if (isTextFile(fileName)) {
+    const markdown = fileBuffer.toString('utf8').trim();
+    return {
+      markdown,
+      pages: [{ page_number: 1, text: markdown }],
+      metadata: { page_count: 1 },
+    };
+  }
+
   // Route image files through Snwolley Vision for richer description
   if (isImageFile(fileName)) {
     return parseImageWithVision(fileBuffer, fileName);

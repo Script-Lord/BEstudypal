@@ -131,7 +131,7 @@ router.delete('/:id', authenticate, async (req, res) => {
 // POST /api/courses/:id/chat — RAG over all docs in course (owner)
 router.post('/:id/chat', authenticate, async (req, res) => {
   const authed = req as AuthedRequest;
-  const { question } = req.body as { question?: string };
+  const { question, webSearch } = req.body as { question?: string; webSearch?: boolean };
   if (!question?.trim()) return res.status(400).json({ error: 'question is required' });
 
   const courseResult = await pool.query(
@@ -146,7 +146,9 @@ router.post('/:id/chat', authenticate, async (req, res) => {
     ? chunks.map((c, idx) => `[Source ${idx + 1}]\n${c.content}`).join('\n\n---\n\n')
     : '(No relevant content found in course documents.)';
 
-  const systemPrompt = `You are a study assistant for "${course.title} (${course.code})". Answer ONLY from the course material excerpts below. Cite source numbers inline, e.g. [Source 1]. If the answer is not in the excerpts, say so clearly.\n\nCOURSE MATERIAL:\n${context}`;
+  const systemPrompt = webSearch
+    ? `You are a study assistant for "${course.title} (${course.code})". Use the course material excerpts below as your primary source and cite them inline, e.g. [Source 1]. When the excerpts are incomplete, you MAY add relevant, accurate background knowledge to give a fuller answer. Clearly separate that supplementary information under a short heading like "Beyond your sources:" so the student knows it is not from their material. Stay focused on what the student asked.\n\nCOURSE MATERIAL:\n${context}`
+    : `You are a study assistant for "${course.title} (${course.code})". Answer ONLY from the course material excerpts below. Cite source numbers inline, e.g. [Source 1]. If the answer is not in the excerpts, say so clearly.\n\nCOURSE MATERIAL:\n${context}`;
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');

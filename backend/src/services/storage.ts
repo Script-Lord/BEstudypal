@@ -19,6 +19,22 @@ export async function downloadFromStorage(storagePath: string): Promise<Buffer> 
   return Buffer.from(arrayBuffer);
 }
 
+export async function uploadTextToStorage(
+  storagePath: string,
+  content: string,
+  contentType = 'text/markdown'
+): Promise<void> {
+  const supabase = getSupabase();
+  const { error } = await supabase.storage
+    .from('documents')
+    .upload(storagePath, Buffer.from(content, 'utf8'), {
+      contentType,
+      upsert: false,
+    });
+
+  if (error) throw new Error(`Storage upload failed: ${error.message}`);
+}
+
 export async function deleteFromStorage(storagePath: string): Promise<void> {
   const supabase = getSupabase();
   await supabase.storage.from('documents').remove([storagePath]);

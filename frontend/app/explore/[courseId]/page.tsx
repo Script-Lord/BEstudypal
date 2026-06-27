@@ -27,6 +27,7 @@ export default function PublicCourseDetailPage() {
 
   const { messages, streaming, error: chatError, sendMessage, clearChat } = useCourseChat(courseId, true);
   const [input, setInput] = useState('');
+  const [webSearch, setWebSearch] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -43,7 +44,7 @@ export default function PublicCourseDetailPage() {
     const q = input.trim();
     if (!q || streaming) return;
     setInput('');
-    sendMessage(q);
+    sendMessage(q, webSearch);
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
   };
 
@@ -93,9 +94,11 @@ export default function PublicCourseDetailPage() {
       <ChatPanel
         title="Chat"
         subtitle={
-          course.documents.length > 0
-            ? `Grounded in ${course.documents.length} course ${course.documents.length === 1 ? 'document' : 'documents'}`
-            : 'No documents in this course yet'
+          webSearch
+            ? `Web + AI on · grounded in ${course.documents.length} course ${course.documents.length === 1 ? 'document' : 'documents'}`
+            : course.documents.length > 0
+              ? `Grounded in ${course.documents.length} course ${course.documents.length === 1 ? 'document' : 'documents'}`
+              : 'No documents in this course yet'
         }
         messages={messages}
         streaming={streaming}
@@ -104,11 +107,17 @@ export default function PublicCourseDetailPage() {
         onInputChange={setInput}
         onSend={handleSend}
         onClear={clearChat}
-        placeholder={course.documents.length === 0 ? 'No materials yet…' : 'Ask a question about this course…'}
-        disabled={course.documents.length === 0}
+        placeholder={
+          course.documents.length === 0
+            ? webSearch ? 'Ask anything…' : 'No materials yet…'
+            : 'Ask a question about this course…'
+        }
+        disabled={course.documents.length === 0 && !webSearch}
         suggestions={course.documents.length > 0 ? SUGGESTIONS : undefined}
-        onSuggestion={sendMessage}
+        onSuggestion={(s) => sendMessage(s, webSearch)}
         sourceCount={sourceCount}
+        webSearch={webSearch}
+        onToggleWebSearch={setWebSearch}
         textareaRef={textareaRef}
         bottomRef={bottomRef}
         emptyState={
@@ -127,7 +136,7 @@ export default function PublicCourseDetailPage() {
                   <button
                     key={s}
                     type="button"
-                    onClick={() => sendMessage(s)}
+                    onClick={() => sendMessage(s, webSearch)}
                     className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-secondary/40 hover:text-ink hover:bg-bg-elevated transition-all"
                   >
                     {s}
