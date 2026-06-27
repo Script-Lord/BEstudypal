@@ -52,8 +52,8 @@ export default function NewCoursePage() {
   return (
     <AppShell
       header={
-        <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 border-b border-bg-border bg-bg-base">
-          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1.5 text-xs text-ink-faint hover:text-ink px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated transition-all">
+        <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 glass-nav">
+          <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1.5 text-xs text-ink-faint hover:text-ink px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated/80 transition-all">
             <ArrowLeft className="w-3.5 h-3.5" />Back
           </button>
           <div className="w-px h-4 bg-bg-border" />
@@ -94,7 +94,7 @@ export default function NewCoursePage() {
                   onChange={e => setCode(e.target.value)}
                   placeholder="e.g. INF 101"
                   required
-                  className="w-full bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
+                  className="w-full glass-input px-3 py-2.5 text-sm"
                 />
               </div>
               <div className="space-y-1.5">
@@ -106,7 +106,7 @@ export default function NewCoursePage() {
                   list="level-suggestions"
                   placeholder="e.g. SHS 1, JHS 2, Level 100"
                   required
-                  className="w-full bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
+                  className="w-full glass-input px-3 py-2.5 text-sm"
                 />
                 <datalist id="level-suggestions">
                   {LEVEL_SUGGESTIONS.map(l => <option key={l} value={l} />)}
@@ -123,12 +123,12 @@ export default function NewCoursePage() {
                 placeholder="Brief description of what this course covers…"
                 rows={3}
                 maxLength={1000}
-                className="w-full bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all resize-none"
+                className="w-full glass-input px-3 py-2.5 text-sm resize-none"
               />
             </div>
 
             {/* Visibility toggle */}
-            <div className="flex items-center justify-between p-4 rounded-xl border border-bg-border bg-bg-surface">
+            <div className="flex items-center justify-between p-4 rounded-xl glass-panel">
               <div className="flex items-center gap-3">
                 {isPublic
                   ? <Globe className="w-4 h-4 text-status-ready" />

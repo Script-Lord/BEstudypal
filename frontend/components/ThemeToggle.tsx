@@ -46,10 +46,10 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
       aria-label={`Switch to ${nextLabel} mode`}
       title={`Switch to ${nextLabel} mode`}
       className={`fixed z-[60] flex items-center justify-center w-10 h-10 rounded-xl
-        bg-bg-surface/90 backdrop-blur border border-bg-border text-ink-muted
-        hover:text-accent hover:border-accent/40 shadow-panel
+        bg-bg-surface/60 backdrop-blur-xl border border-bg-border/30 text-ink-muted
+        hover:text-accent hover:border-accent/40 shadow-glass
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50
-        transition-colors duration-150
+        transition-all duration-150
         bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-4
         md:bottom-4 md:left-4 md:right-auto ${className}`}
     >

@@ -26,7 +26,7 @@ export function MobileBottomNav() {
 
   if (!user) {
     return (
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border bg-bg-surface/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] shadow-panel-lg">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border/40 bg-bg-surface/70 backdrop-blur-xl pb-[env(safe-area-inset-bottom)] shadow-glass-lg">
         <div className="flex items-stretch justify-around px-4 pt-1.5 pb-1.5">
           <button
             type="button"
@@ -50,7 +50,7 @@ export function MobileBottomNav() {
   }
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border bg-bg-surface/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] shadow-panel-lg">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border/40 bg-bg-surface/70 backdrop-blur-xl pb-[env(safe-area-inset-bottom)] shadow-glass-lg">
       <div className="flex items-stretch justify-around px-2 pt-1.5 pb-1.5">
         {NAV_ITEMS.map(item => {
           const { href, icon: Icon, label } = item;

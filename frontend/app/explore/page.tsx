@@ -45,7 +45,7 @@ export default function ExplorePage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by title or code…"
-              className="w-full bg-bg-elevated border border-bg-border rounded-lg pl-8 pr-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent/40 transition-all"
+              className="w-full glass-input pl-8 pr-3 py-2.5 text-sm"
             />
           </div>
           <div className="flex gap-1.5 flex-wrap">
@@ -56,7 +56,7 @@ export default function ExplorePage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   levelFilter === l
                     ? 'bg-accent text-white'
-                    : 'bg-bg-elevated border border-bg-border text-ink-muted hover:text-ink'
+                    : 'glass-panel text-ink-muted hover:text-ink'
                 }`}
               >
                 {l}
@@ -68,8 +68,8 @@ export default function ExplorePage() {
         {/* Grid */}
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="h-44 rounded-2xl bg-bg-surface animate-pulse" style={{ opacity: 1 - i * 0.12 }} />
+              {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="h-44 rounded-2xl bg-bg-surface/60 backdrop-blur-sm border border-bg-border/30 animate-pulse" style={{ opacity: 1 - i * 0.12 }} />
             ))}
           </div>
         ) : error ? (

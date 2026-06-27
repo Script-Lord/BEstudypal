@@ -38,7 +38,7 @@ export function CourseCard({ course, isOwner = false, showChatAlways = false, on
       role={onOpen ? 'button' : undefined}
       tabIndex={onOpen ? 0 : undefined}
       onKeyDown={onOpen ? e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(course.id); } } : undefined}
-      className={`group flex flex-col gap-3 p-5 rounded-2xl border border-bg-border bg-bg-surface hover:border-accent/30 hover:bg-bg-elevated/50 transition-all duration-200${onOpen ? ' cursor-pointer' : ''}`}
+      className={`group flex flex-col gap-3 p-5 rounded-2xl glass-card${onOpen ? ' cursor-pointer' : ''}`}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">

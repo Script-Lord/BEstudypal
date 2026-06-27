@@ -28,7 +28,7 @@ function PopularCourseCard({ course, onChat }: { course: Course; onChat: (id: st
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-4 p-5 rounded-2xl border border-bg-border bg-bg-surface hover:border-accent/40 hover:bg-bg-elevated/30 transition-all duration-200 group"
+      className="flex flex-col gap-4 p-5 rounded-2xl glass-card group"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -106,7 +106,7 @@ export default function RootPage() {
   return (
     <div className="min-h-dvh bg-bg-base flex flex-col">
       {/* Nav */}
-      <nav className="sticky top-0 z-40 border-b border-bg-border bg-bg-base/90 backdrop-blur-md">
+      <nav className="sticky top-0 z-40 glass-nav">
         <div className="max-w-5xl mx-auto px-5 flex items-center justify-between" style={{ height: 52 }}>
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-accent" />
@@ -161,7 +161,7 @@ export default function RootPage() {
               </button>
               <button
                 onClick={() => router.push('/explore')}
-                className="flex items-center gap-2 bg-bg-surface border border-bg-border text-sm text-ink-muted hover:text-ink hover:border-accent/30 px-5 py-2.5 rounded-xl transition-all"
+                className="flex items-center gap-2 bg-bg-surface/50 backdrop-blur-sm border border-bg-border/40 text-sm text-ink-muted hover:text-ink hover:border-accent/30 px-5 py-2.5 rounded-xl transition-all"
               >
                 <Globe className="w-4 h-4" />
                 Browse all courses
@@ -225,7 +225,7 @@ export default function RootPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="border-t border-bg-border bg-bg-surface">
+        <section className="border-t border-bg-border/40 bg-bg-surface/60 backdrop-blur-sm">
           <div className="max-w-5xl mx-auto px-5 py-12 text-center">
             <h2 className="text-lg font-semibold text-ink mb-2">Ready to study smarter?</h2>
             <p className="text-sm text-ink-muted mb-6">Upload your own course materials and build an AI tutor in minutes.</p>

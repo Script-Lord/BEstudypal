@@ -123,7 +123,7 @@ export function ChatPanel({
                       key={s}
                       type="button"
                       onClick={() => onSuggestion(s)}
-                      className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-elevated transition-all"
+                      className="text-left text-xs text-ink-muted border border-bg-border/50 bg-bg-surface/40 backdrop-blur-sm rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-surface/60 transition-all"
                     >
                       {s}
                     </button>
@@ -154,7 +154,7 @@ export function ChatPanel({
       )}
 
       <div className="shrink-0 px-3 sm:px-5 pb-3 sm:pb-5 pt-2">
-        <div className="input-surface px-3 sm:px-4 py-3">
+        <div className="input-surface px-3 sm:px-4 py-3 bg-bg-elevated/50">
           <div className="relative">
             <textarea
               ref={textareaRef}
@@ -218,7 +218,7 @@ export function ChatPanel({
                 className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-all shrink-0 ${
                   webSearch
                     ? 'bg-accent-muted/60 border-accent/30 text-accent'
-                    : 'bg-bg-surface border-bg-border text-ink-faint hover:text-ink'
+                    : 'glass-panel text-ink-faint hover:text-ink'
                 }`}
               >
                 <Globe className="w-3.5 h-3.5" />

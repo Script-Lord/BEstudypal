@@ -16,7 +16,7 @@ export function MobilePanelBar() {
     }`;
 
   return (
-    <div className="md:hidden shrink-0 px-3 py-2 flex items-center gap-2 border-b border-bg-border bg-bg-surface/80 backdrop-blur-sm">
+    <div className="md:hidden shrink-0 px-3 py-2 flex items-center gap-2 border-b border-bg-border/40 bg-bg-surface/60 backdrop-blur-lg">
       {hasSources && (
         <button type="button" onClick={() => togglePanel('sources')} className={btn(openPanel === 'sources')}>
           <FileText className="w-3.5 h-3.5" />

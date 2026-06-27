@@ -62,7 +62,7 @@ export default function PublicCourseDetailPage() {
   return (
     <AppShell
       header={
-        <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 border-b border-bg-border bg-bg-base">
+        <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 glass-nav">
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <BookOpen className="w-3.5 h-3.5 text-accent shrink-0" />
             <span className="text-sm font-medium text-ink truncate">{course.title}</span>
@@ -140,7 +140,7 @@ export default function PublicCourseDetailPage() {
                     key={s}
                     type="button"
                     onClick={() => sendMessage(s, webSearch)}
-                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-elevated transition-all"
+                    className="text-left text-xs text-ink-muted border border-bg-border/50 bg-bg-surface/40 backdrop-blur-sm rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-surface/60 transition-all"
                   >
                     {s}
                   </button>

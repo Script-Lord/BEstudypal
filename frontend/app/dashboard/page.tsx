@@ -59,14 +59,14 @@ export default function DashboardPage() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search your courses…"
-                className="w-full bg-bg-elevated border border-bg-border rounded-lg pl-8 pr-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent/40 transition-all"
+                className="w-full glass-input pl-8 pr-3 py-2 text-sm"
               />
             </div>
           )}
 
           {coursesLoading ? (
             <div className="grid gap-3 sm:grid-cols-2">
-              {[1, 2].map(i => <div key={i} className="h-40 rounded-2xl bg-bg-surface animate-pulse" style={{ opacity: 1 - i * 0.3 }} />)}
+              {[1, 2].map(i => <div key={i} className="h-40 rounded-2xl bg-bg-surface/60 backdrop-blur-sm border border-bg-border/30 animate-pulse" style={{ opacity: 1 - i * 0.3 }} />)}
             </div>
           ) : coursesError ? (
             <ErrorState message={coursesError} onRetry={refreshCourses} />
@@ -108,7 +108,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 function EmptyState({ onNew }: { onNew: () => void }) {
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center py-24 gap-5">
-      <div className="w-12 h-12 rounded-2xl bg-bg-surface border border-bg-border flex items-center justify-center">
+      <div className="w-12 h-12 rounded-2xl glass-panel flex items-center justify-center">
         <BookOpen className="w-5 h-5 text-ink-faint" />
       </div>
       <div className="text-center">

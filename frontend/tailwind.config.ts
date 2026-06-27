@@ -45,9 +45,16 @@ const config: Config = {
         panel: '0 1px 3px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.04)',
         'panel-lg': '0 4px 24px rgb(0 0 0 / 0.12)',
         glow: '0 0 20px rgb(var(--color-accent) / 0.15)',
+        glass: '0 8px 32px rgb(0 0 0 / 0.08)',
+        'glass-lg': '0 16px 48px rgb(0 0 0 / 0.12)',
       },
       borderRadius: {
         '2.5xl': '1.25rem',
+      },
+      backdropBlur: {
+        xs: '2px',
+        glass: '12px',
+        'glass-lg': '20px',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

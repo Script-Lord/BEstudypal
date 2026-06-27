@@ -132,19 +132,19 @@ export default function RegisterPage() {
               onChange={e => setEmail(e.target.value)}
               placeholder="Email address"
               required
-              className="w-full bg-bg-elevated border border-bg-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
-            />
-          </div>
+                className="w-full glass-input pl-9 pr-4 py-2.5 text-sm"
+              />
+            </div>
 
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint pointer-events-none" />
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Password (min. 8 characters)"
-              required
-              className="w-full bg-bg-elevated border border-bg-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint pointer-events-none" />
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Password (min. 8 characters)"
+                required
+                className="w-full glass-input pl-9 pr-4 py-2.5 text-sm"
             />
           </div>
 

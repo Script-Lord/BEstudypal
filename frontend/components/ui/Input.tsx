@@ -17,10 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <input
         ref={ref}
         className={`
-          w-full bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5
-          text-sm text-ink placeholder:text-ink-faint
-          focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50
-          transition-all duration-150
+          w-full glass-input px-3 py-2.5 text-sm
           ${error ? 'border-status-failed/50 focus:ring-status-failed/30' : ''}
           ${className}
         `}

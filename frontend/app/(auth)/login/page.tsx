@@ -51,7 +51,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
-        className="hidden lg:flex flex-col justify-between w-[45%] bg-bg-surface border-r border-bg-border p-12"
+        className="hidden lg:flex flex-col justify-between w-[45%] bg-bg-surface/60 backdrop-blur-xl border-r border-bg-border/40 p-12"
       >
         <div className="flex items-center gap-2.5">
           <BookOpen className="w-6 h-6 text-accent" />
@@ -127,7 +127,7 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Email address"
                 required
-                className="w-full bg-bg-elevated border border-bg-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
+                className="w-full glass-input pl-9 pr-4 py-2.5 text-sm"
               />
             </div>
 
@@ -139,7 +139,7 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Password"
                 required
-                className="w-full bg-bg-elevated border border-bg-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
+                className="w-full glass-input pl-9 pr-4 py-2.5 text-sm"
               />
             </div>
 

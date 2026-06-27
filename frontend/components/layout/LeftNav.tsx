@@ -38,12 +38,12 @@ export function LeftNav() {
     <motion.aside
       animate={{ width: expanded ? 208 : 60 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="hidden md:flex shrink-0 bg-bg-surface/80 backdrop-blur-md border-r border-bg-border flex-col py-4 gap-0.5 overflow-hidden"
+      className="hidden md:flex shrink-0 bg-bg-surface/60 backdrop-blur-xl border-r border-bg-border/40 flex-col py-4 gap-0.5 overflow-hidden shadow-glass"
     >
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className={`${row()} text-ink-faint hover:text-ink hover:bg-bg-elevated mb-2`}
+        className={`${row()} text-ink-faint hover:text-ink hover:bg-bg-elevated/80 mb-2`}
         aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
       >
         <PanelLeft className="w-4 h-4 shrink-0" />
@@ -53,7 +53,7 @@ export function LeftNav() {
       <button
         type="button"
         onClick={() => router.push('/dashboard')}
-        className={`${row(isHome)} ${isHome ? 'text-accent' : 'text-ink-faint hover:text-accent hover:bg-accent-muted/60'} mb-3`}
+        className={`${row(isHome)} ${isHome ? '' : 'text-ink-faint hover:text-accent hover:bg-accent-muted/60'} mb-3`}
         aria-label="StudyPal home"
       >
         <BookOpen className="w-4 h-4 shrink-0" />
@@ -71,7 +71,7 @@ export function LeftNav() {
               onClick={() => router.push(href)}
               title={label}
               className={`${row(active)} ${
-                active ? '' : 'text-ink-faint hover:text-ink hover:bg-bg-elevated'
+                active ? '' : 'text-ink-faint hover:text-ink hover:bg-bg-elevated/80'
               }`}
             >
               <Icon className="w-4 h-4 shrink-0" />
@@ -110,7 +110,7 @@ export function LeftNav() {
           <button
             type="button"
             onClick={() => router.push('/login')}
-            className={`${row()} text-ink-faint hover:text-ink hover:bg-bg-elevated`}
+            className={`${row()} text-ink-faint hover:text-ink hover:bg-bg-elevated/80`}
             aria-label="Sign in"
           >
             <LogIn className="w-4 h-4 shrink-0" />

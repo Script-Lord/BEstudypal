@@ -157,7 +157,7 @@ export default function CourseDetailPage() {
           </div>
 
           {course.is_public && (
-            <div className="shrink-0 px-4 py-2 border-b border-bg-border bg-status-ready/5 flex items-center gap-2 text-xs text-ink-muted">
+            <div className="shrink-0 px-4 py-2 border-b border-bg-border/30 bg-status-ready/5 backdrop-blur-sm flex items-center gap-2 text-xs text-ink-muted">
               <Globe className="w-3.5 h-3.5 text-status-ready shrink-0" />
               <span className="truncate">
                 Share link:{' '}

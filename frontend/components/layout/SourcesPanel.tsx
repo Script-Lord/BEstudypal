@@ -153,7 +153,7 @@ export function SourcesPanel({
         {uploadSlot}
 
         {showWebSearch && courseId && (
-          <div className="rounded-xl border border-bg-border bg-bg-elevated/40 p-3">
+          <div className="rounded-xl bg-bg-elevated/30 backdrop-blur-sm border border-bg-border/40 p-3">
             <p className="text-xs text-ink-muted mb-2.5">Paste a URL to fetch as a source</p>
             <div className="relative">
               <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-faint pointer-events-none" />
@@ -164,14 +164,14 @@ export function SourcesPanel({
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleFetchUrl(); } }}
                 placeholder="https://example.com/article"
                 disabled={fetchingUrl}
-                className="w-full bg-bg-surface border border-bg-border rounded-lg pl-9 pr-11 py-2.5 text-xs text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent/40 disabled:opacity-50"
+                className="w-full glass-input pl-9 pr-11 py-2.5 text-xs disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={handleFetchUrl}
                 disabled={!urlInput.trim() || fetchingUrl}
                 title="Fetch URL"
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-bg-surface border border-bg-border flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-bg-surface/50 backdrop-blur-sm border border-bg-border/40 flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               >
                 {fetchingUrl ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
