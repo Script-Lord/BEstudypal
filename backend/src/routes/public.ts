@@ -7,40 +7,50 @@ const router = Router();
 
 // GET /api/public/courses — browse all public courses (no auth)
 router.get('/courses', async (_req, res) => {
-  const result = await pool.query(
-    `SELECT c.id, c.title, c.code, c.level, c.description, c.created_at,
-       COUNT(d.id) FILTER (WHERE d.status = 'ready') AS doc_count,
-       split_part(u.email, '@', 1) AS author
-     FROM courses c
-     JOIN users u ON u.id = c.user_id
-     LEFT JOIN documents d ON d.course_id = c.id
-     WHERE c.is_public = true
-     GROUP BY c.id, u.email
-     ORDER BY c.created_at DESC`
-  );
-  res.json(result.rows);
+  try {
+    const result = await pool.query(
+      `SELECT c.id, c.title, c.code, c.level, c.description, c.created_at,
+         COUNT(d.id) FILTER (WHERE d.status = 'ready') AS doc_count,
+         split_part(u.email, '@', 1) AS author
+       FROM courses c
+       JOIN users u ON u.id = c.user_id
+       LEFT JOIN documents d ON d.course_id = c.id
+       WHERE c.is_public = true
+       GROUP BY c.id, u.email
+       ORDER BY c.created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('GET /api/public/courses:', err);
+    res.status(503).json({ error: 'Database unavailable' });
+  }
 });
 
 // GET /api/public/courses/:id — single public course + its ready documents
 router.get('/courses/:id', async (req, res) => {
-  const courseResult = await pool.query(
-    `SELECT c.*, split_part(u.email, '@', 1) AS author
-     FROM courses c
-     JOIN users u ON u.id = c.user_id
-     WHERE c.id = $1 AND c.is_public = true`,
-    [req.params.id]
-  );
-  if (courseResult.rows.length === 0) return res.status(404).json({ error: 'Course not found' });
+  try {
+    const courseResult = await pool.query(
+      `SELECT c.*, split_part(u.email, '@', 1) AS author
+       FROM courses c
+       JOIN users u ON u.id = c.user_id
+       WHERE c.id = $1 AND c.is_public = true`,
+      [req.params.id]
+    );
+    if (courseResult.rows.length === 0) return res.status(404).json({ error: 'Course not found' });
 
-  const docs = await pool.query(
-    `SELECT id, name, file_type, status, page_count, word_count, created_at
-     FROM documents
-     WHERE course_id = $1 AND status = 'ready'
-     ORDER BY created_at DESC`,
-    [req.params.id]
-  );
+    const docs = await pool.query(
+      `SELECT id, name, file_type, status, page_count, word_count, created_at
+       FROM documents
+       WHERE course_id = $1 AND status = 'ready'
+       ORDER BY created_at DESC`,
+      [req.params.id]
+    );
 
-  res.json({ ...courseResult.rows[0], documents: docs.rows });
+    res.json({ ...courseResult.rows[0], documents: docs.rows });
+  } catch (err) {
+    console.error('GET /api/public/courses/:id:', err);
+    res.status(503).json({ error: 'Database unavailable' });
+  }
 });
 
 // POST /api/public/courses/:id/chat — stateless RAG for public visitors (no auth, history not saved)
@@ -48,12 +58,18 @@ router.post('/courses/:id/chat', async (req, res) => {
   const { question } = req.body as { question?: string };
   if (!question?.trim()) return res.status(400).json({ error: 'question is required' });
 
-  const courseResult = await pool.query(
-    `SELECT id, title, code FROM courses WHERE id = $1 AND is_public = true`,
-    [req.params.id]
-  );
-  if (courseResult.rows.length === 0) return res.status(404).json({ error: 'Course not found' });
-  const course = courseResult.rows[0];
+  let course;
+  try {
+    const courseResult = await pool.query(
+      `SELECT id, title, code FROM courses WHERE id = $1 AND is_public = true`,
+      [req.params.id]
+    );
+    if (courseResult.rows.length === 0) return res.status(404).json({ error: 'Course not found' });
+    course = courseResult.rows[0];
+  } catch (err) {
+    console.error('POST /api/public/courses/:id/chat:', err);
+    return res.status(503).json({ error: 'Database unavailable' });
+  }
 
   const chunks = await searchChunksInCourse(req.params.id, 8, question);
   const context = chunks.length > 0

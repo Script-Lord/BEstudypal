@@ -53,10 +53,10 @@ export function ChatWindow({ documentId, documentName }: Props) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-bg-border shrink-0">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-bg-border shrink-0">
         <div>
-          <h2 className="text-sm font-medium text-ink">{documentName}</h2>
-          <p className="text-xs text-ink-faint mt-0.5">Ask anything about this document</p>
+          <h2 className="text-sm font-medium text-ink">Chat</h2>
+          <p className="text-xs text-ink-faint mt-0.5">{documentName}</p>
         </div>
         {!isEmpty && (
           <button
@@ -90,7 +90,7 @@ export function ChatWindow({ documentId, documentName }: Props) {
                   <button
                     key={s}
                     onClick={() => sendMessage(s)}
-                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-elevated transition-all duration-150"
+                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-secondary/40 hover:text-ink hover:bg-bg-elevated transition-all duration-150"
                   >
                     {s}
                   </button>
@@ -122,7 +122,7 @@ export function ChatWindow({ documentId, documentName }: Props) {
 
       {/* Input */}
       <div className="shrink-0 px-6 pb-6 pt-2">
-        <div className="flex items-end gap-3 bg-bg-elevated border border-bg-border rounded-2xl px-4 py-3 focus-within:border-accent/40 transition-all duration-150">
+        <div className="flex items-end gap-3 bg-bg-elevated border border-bg-border rounded-2xl px-4 py-3 focus-within:border-secondary/40 transition-all duration-150">
           <textarea
             ref={textareaRef}
             value={input}
@@ -137,7 +137,7 @@ export function ChatWindow({ documentId, documentName }: Props) {
           <button
             onClick={handleSend}
             disabled={!input.trim() || streaming}
-            className="shrink-0 w-8 h-8 rounded-xl bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150"
+            className="shrink-0 w-8 h-8 rounded-full bg-secondary hover:bg-secondary-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150 shadow-lg shadow-secondary/25"
           >
             {streaming ? (
               <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

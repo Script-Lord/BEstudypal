@@ -24,6 +24,11 @@ const config: Config = {
           hover: 'rgb(var(--color-accent-hover) / <alpha-value>)',
           muted: 'rgb(var(--color-accent) / 0.15)',
         },
+        secondary: {
+          DEFAULT: 'rgb(var(--color-secondary) / <alpha-value>)',
+          hover: 'rgb(var(--color-secondary-hover) / <alpha-value>)',
+          muted: 'rgb(var(--color-secondary-muted) / 0.12)',
+        },
         status: {
           pending: 'rgb(var(--color-status-pending) / <alpha-value>)',
           processing: 'rgb(var(--color-status-processing) / <alpha-value>)',

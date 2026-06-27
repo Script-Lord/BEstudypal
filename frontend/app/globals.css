@@ -14,8 +14,11 @@
     --color-ink: 15 23 42;
     --color-ink-muted: 71 85 105;
     --color-ink-faint: 148 163 184;
-    --color-accent: 79 70 229;
-    --color-accent-hover: 67 56 202;
+    --color-accent: 37 99 235;
+    --color-accent-hover: 29 78 216;
+    --color-secondary: 59 130 246;
+    --color-secondary-hover: 37 99 235;
+    --color-secondary-muted: 59 130 246;
     --color-status-pending: 217 119 6;
     --color-status-processing: 37 99 235;
     --color-status-ready: 22 163 74;
@@ -32,8 +35,11 @@
       --color-ink: 235 238 242;
       --color-ink-muted: 150 158 166;
       --color-ink-faint: 91 100 109;
-      --color-accent: 99 102 241;
-      --color-accent-hover: 124 127 250;
+      --color-accent: 59 130 246;
+      --color-accent-hover: 96 165 250;
+      --color-secondary: 96 165 250;
+      --color-secondary-hover: 59 130 246;
+      --color-secondary-muted: 59 130 246;
       --color-status-pending: 245 158 11;
       --color-status-processing: 59 130 246;
       --color-status-ready: 34 197 94;

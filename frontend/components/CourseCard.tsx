@@ -50,8 +50,8 @@ export function CourseCard({ course, isOwner = false, showChatAlways = false, on
             {course.level}
           </span>
           {course.is_public
-            ? <Globe className="w-3.5 h-3.5 text-status-ready" title="Public" />
-            : <Lock className="w-3.5 h-3.5 text-ink-faint" title="Private" />
+            ? <span title="Public"><Globe className="w-3.5 h-3.5 text-status-ready" /></span>
+            : <span title="Private"><Lock className="w-3.5 h-3.5 text-ink-faint" /></span>
           }
         </div>
       </div>
