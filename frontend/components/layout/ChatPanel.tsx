@@ -64,7 +64,6 @@ export function ChatPanel({
     e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
   };
 
-  const inputBottom = onToggleWebSearch ? 'bottom-2' : 'bottom-2.5';
   const voiceBusy = recording || transcribing;
   const voiceDisabled = disabled || streaming || voiceBusy || !onVoiceMessage;
 
@@ -155,21 +154,57 @@ export function ChatPanel({
       )}
 
       <div className="shrink-0 px-3 sm:px-5 pb-3 sm:pb-5 pt-2">
-        <div className="relative input-surface px-3 sm:px-4 py-3">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            rows={1}
-            disabled={disabled || streaming}
-            className="w-full bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50 pr-24"
-            style={{ minHeight: 24, maxHeight: 160 }}
-          />
+        <div className="input-surface px-3 sm:px-4 py-3">
+          <div className="relative">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              rows={1}
+              disabled={disabled || streaming}
+              className="w-full bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50 pr-24"
+              style={{ minHeight: 24, maxHeight: 160 }}
+            />
+
+            {onVoiceMessage && (
+              <button
+                type="button"
+                onClick={handleVoice}
+                disabled={voiceDisabled}
+                title={recording ? 'Stop and send' : transcribing ? 'Transcribing…' : 'Record voice message'}
+                aria-label={recording ? 'Stop recording' : 'Record voice message'}
+                className={`absolute right-12 bottom-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
+                  recording
+                    ? 'bg-status-failed text-white animate-pulse'
+                    : 'text-ink-faint hover:text-accent hover:bg-accent-muted/40'
+                }`}
+              >
+                {transcribing ? (
+                  <span className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Mic className="w-4 h-4" />
+                )}
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onSend}
+              disabled={!input.trim() || streaming || disabled}
+              className="absolute right-2 bottom-2.5 w-9 h-9 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-glow"
+            >
+              {streaming ? (
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Send className="w-3.5 h-3.5" />
+              )}
+            </button>
+          </div>
 
           {onToggleWebSearch && (
-            <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-2 mt-2 pt-1 border-t border-bg-border/60">
               <button
                 type="button"
                 onClick={() => onToggleWebSearch(!webSearch)}
@@ -180,7 +215,7 @@ export function ChatPanel({
                     ? 'Web + AI is on — answers may add knowledge beyond your sources'
                     : 'Turn on Web + AI to expand answers beyond your sources'
                 }
-                className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-all ${
+                className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-all shrink-0 ${
                   webSearch
                     ? 'bg-accent-muted/60 border-accent/30 text-accent'
                     : 'bg-bg-surface border-bg-border text-ink-faint hover:text-ink'
@@ -200,50 +235,16 @@ export function ChatPanel({
                   />
                 </span>
               </button>
-              <span className="text-[11px] text-ink-faint hidden sm:block">
+              <span className="text-[11px] text-ink-faint truncate min-w-0 hidden sm:block">
                 {webSearch ? 'Expands beyond your sources' : 'Stays within your sources'}
               </span>
               {sourceCount != null && sourceCount > 0 && (
-                <span className="text-[11px] text-ink-faint hidden sm:inline ml-auto">
-                  {sourceCount} sources
+                <span className="text-[11px] text-ink-faint shrink-0 ml-auto">
+                  {sourceCount} {sourceCount === 1 ? 'source' : 'sources'}
                 </span>
               )}
             </div>
           )}
-
-          {onVoiceMessage && (
-            <button
-              type="button"
-              onClick={handleVoice}
-              disabled={voiceDisabled}
-              title={recording ? 'Stop and send' : transcribing ? 'Transcribing…' : 'Record voice message'}
-              aria-label={recording ? 'Stop recording' : 'Record voice message'}
-              className={`absolute right-12 w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed ${inputBottom} ${
-                recording
-                  ? 'bg-status-failed text-white animate-pulse'
-                  : 'text-ink-faint hover:text-accent hover:bg-accent-muted/40'
-              }`}
-            >
-              {transcribing ? (
-                <span className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Mic className="w-4 h-4" />
-              )}
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={onSend}
-            disabled={!input.trim() || streaming || disabled}
-            className={`absolute right-2 w-9 h-9 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-glow ${inputBottom}`}
-          >
-            {streaming ? (
-              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Send className="w-3.5 h-3.5" />
-            )}
-          </button>
         </div>
       </div>
     </div>

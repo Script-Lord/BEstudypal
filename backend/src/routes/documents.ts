@@ -6,6 +6,7 @@ import { pool } from '../db/client';
 import { documentQueue } from '../queue/jobQueue';
 import { deleteFromStorage, uploadTextToStorage } from '../services/storage';
 import { fetchWebSource } from '../services/webSource';
+import { removeChunks } from '../services/vectorSearch';
 
 const router = Router();
 
@@ -80,7 +81,15 @@ router.post('/web-source', authenticate, async (req, res) => {
   }
 
   const documentId = uuidv4();
-  const fetched = await fetchWebSource(url);
+
+  let fetched;
+  try {
+    fetched = await fetchWebSource(url);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Could not fetch URL';
+    return res.status(400).json({ error: message });
+  }
+
   const safeHost = new URL(fetched.sourceUrl).hostname.replace(/[^a-z0-9.-]/gi, '-');
   const fileName = `${fetched.title.replace(/[\\/:*?"<>|]/g, '').slice(0, 80) || safeHost}.md`;
   const storagePath = `${authed.user.id}/web-${Date.now()}-${documentId}.md`;
@@ -141,7 +150,7 @@ router.delete('/:id', authenticate, async (req, res) => {
   const authed = req as AuthedRequest;
 
   const result = await pool.query(
-    `DELETE FROM documents WHERE id = $1 AND user_id = $2 RETURNING storage_path`,
+    `DELETE FROM documents WHERE id = $1 AND user_id = $2 RETURNING storage_path, course_id`,
     [req.params.id, authed.user.id]
   );
 
@@ -149,8 +158,11 @@ router.delete('/:id', authenticate, async (req, res) => {
     return res.status(404).json({ error: 'Document not found' });
   }
 
-  // Fire-and-forget storage cleanup
-  deleteFromStorage(result.rows[0].storage_path).catch(console.error);
+  const { storage_path, course_id } = result.rows[0];
+
+  // Fire-and-forget cleanup
+  deleteFromStorage(storage_path).catch(console.error);
+  removeChunks(req.params.id, course_id).catch(console.error);
 
   res.json({ success: true });
 });

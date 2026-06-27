@@ -61,11 +61,16 @@ const worker = new Worker<DocumentJobData>(
     await job.updateProgress(60);
     const embeddings = await generateEmbeddings(chunks);
 
-    // 5. Store
+    // 5. Store in Redis
     await job.updateProgress(80);
     const storeStart = Date.now();
-    await storeChunks(documentId, userId, chunks, embeddings, pages);
-    console.log(`[Worker] Stored chunks in ${Date.now() - storeStart}ms`);
+    const docRow = await pool.query<{ course_id: string | null }>(
+      'SELECT course_id FROM documents WHERE id = $1',
+      [documentId]
+    );
+    const courseId = docRow.rows[0]?.course_id ?? null;
+    await storeChunks(documentId, userId, chunks, embeddings, pages, courseId);
+    console.log(`[Worker] Stored chunks in Redis (${Date.now() - storeStart}ms)`);
 
     // 6. Mark ready
     await updateDocumentStatus(documentId, 'ready', {

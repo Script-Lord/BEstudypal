@@ -171,9 +171,13 @@ export default function CourseDetailPage() {
       sources={
         <SourcesPanel
           documents={documents}
+          courseId={courseId}
           onAdd={() => setShowUpload(v => !v)}
           onDelete={handleDeleteDoc}
           onOpen={doc => router.push(`/chat/${doc.id}`)}
+          onWebSourceAdded={() => {
+            setTimeout(() => api.getCourseDocuments(courseId).then(setDocuments), 500);
+          }}
           uploadSlot={
             <AnimatePresence>
               {showUpload && user && (

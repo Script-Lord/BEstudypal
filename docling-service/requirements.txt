@@ -2,3 +2,6 @@ fastapi>=0.111.0
 uvicorn[standard]>=0.30.0
 docling>=2.0.0
 python-multipart>=0.0.9
+# Pin RapidOCR when auto-OCR falls back to it (see docling #3265)
+rapidocr>=3.8.3,<3.9
+onnxruntime>=1.19.0

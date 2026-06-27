@@ -1,6 +1,6 @@
 /**
  * Text chunking — no external embedding API needed.
- * Similarity search uses PostgreSQL full-text search (tsvector/tsquery).
+ * Similarity search uses Redis keyword matching.
  */
 
 const CHUNK_CHARS = 512 * 4;   // ~512 tokens × 4 chars/token
@@ -27,9 +27,15 @@ export function chunkText(text: string): string[] {
     }
 
     const chunk = text.slice(start, end).trim();
-    if (chunk.length > 50) chunks.push(chunk);
+    if (chunk.length > 0) chunks.push(chunk);
 
+    if (end >= text.length) break;
     start = end - OVERLAP_CHARS;
+  }
+
+  // Short documents: always keep at least one chunk
+  if (chunks.length === 0 && text.trim().length > 0) {
+    chunks.push(text.trim());
   }
 
   return chunks;

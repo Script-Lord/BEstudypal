@@ -2,10 +2,10 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Check, ChevronDown, FileImage, FileText, Globe, Loader2, PanelLeft,
-  PanelLeftClose, Plus, Presentation, Search, Sparkles, Trash2, X,
+  AlertCircle, Check, FileImage, FileText, Globe, Link2, Loader2, PanelLeft,
+  PanelLeftClose, Plus, Presentation, Trash2, X,
 } from 'lucide-react';
-import { Document } from '../../lib/api';
+import { Document, api } from '../../lib/api';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { useMobilePanels } from './MobilePanelsContext';
 
@@ -17,9 +17,11 @@ function getDocIcon(type: string) {
 
 interface SourcesPanelProps {
   documents: Document[];
+  courseId?: string;
   onAdd?: () => void;
   onDelete?: (id: string) => void;
   onOpen?: (doc: Document) => void;
+  onWebSourceAdded?: () => void;
   uploadSlot?: ReactNode;
   selectable?: boolean;
   showWebSearch?: boolean;
@@ -27,11 +29,29 @@ interface SourcesPanelProps {
   defaultOpen?: boolean;
 }
 
+function normalizeUrl(input: string): string {
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
+function isValidUrl(input: string): boolean {
+  try {
+    const url = new URL(normalizeUrl(input));
+    return ['http:', 'https:'].includes(url.protocol);
+  } catch {
+    return false;
+  }
+}
+
 export function SourcesPanel({
   documents,
+  courseId,
   onAdd,
   onDelete,
   onOpen,
+  onWebSourceAdded,
   uploadSlot,
   selectable = true,
   showWebSearch = true,
@@ -43,6 +63,9 @@ export function SourcesPanel({
   const [desktopOpen, setDesktopOpen] = useState(defaultOpen);
   const [selected, setSelected] = useState<Set<string>>(() => new Set(documents.map(d => d.id)));
   const knownIds = useRef<Set<string>>(new Set());
+  const [urlInput, setUrlInput] = useState('');
+  const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [urlError, setUrlError] = useState<string | null>(null);
 
   const isOpen = isMobile
     ? mobilePanels?.openPanel === 'sources'
@@ -80,6 +103,27 @@ export function SourcesPanel({
     [documents],
   );
 
+  const handleFetchUrl = async () => {
+    if (!courseId || fetchingUrl) return;
+    const normalized = normalizeUrl(urlInput);
+    if (!isValidUrl(urlInput)) {
+      setUrlError('Enter a valid URL (https://…)');
+      return;
+    }
+
+    setFetchingUrl(true);
+    setUrlError(null);
+    try {
+      await api.createWebSource({ url: normalized, courseId });
+      setUrlInput('');
+      onWebSourceAdded?.();
+    } catch (err) {
+      setUrlError(err instanceof Error ? err.message : 'Could not fetch URL');
+    } finally {
+      setFetchingUrl(false);
+    }
+  };
+
   const panelBody = (
     <>
       <div className="flex items-center justify-between px-4 py-3 panel-header shrink-0">
@@ -108,34 +152,43 @@ export function SourcesPanel({
 
         {uploadSlot}
 
-        {showWebSearch && onAdd && (
+        {showWebSearch && courseId && (
           <div className="rounded-xl border border-bg-border bg-bg-elevated/40 p-3">
-            <p className="text-xs text-ink-muted mb-2.5">Search the web for new sources</p>
-            <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-xs text-ink-muted mb-2.5">Paste a URL to fetch as a source</p>
+            <div className="relative">
+              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-faint pointer-events-none" />
+              <input
+                type="url"
+                value={urlInput}
+                onChange={e => { setUrlInput(e.target.value); setUrlError(null); }}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleFetchUrl(); } }}
+                placeholder="https://example.com/article"
+                disabled={fetchingUrl}
+                className="w-full bg-bg-surface border border-bg-border rounded-lg pl-9 pr-11 py-2.5 text-xs text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent/40 disabled:opacity-50"
+              />
               <button
                 type="button"
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-bg-surface border border-bg-border text-xs text-ink-muted hover:text-ink transition-all"
-                title="Source type"
+                onClick={handleFetchUrl}
+                disabled={!urlInput.trim() || fetchingUrl}
+                title="Fetch URL"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-bg-surface border border-bg-border flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               >
-                <Globe className="w-3.5 h-3.5" />
-                <ChevronDown className="w-3 h-3" />
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-bg-surface border border-bg-border text-xs text-ink-muted hover:text-ink transition-all"
-                title="AI options"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <ChevronDown className="w-3 h-3" />
-              </button>
-              <button
-                type="button"
-                className="ml-auto w-8 h-8 rounded-full bg-bg-surface border border-bg-border flex items-center justify-center text-ink-faint hover:text-ink transition-all"
-                title="Search"
-              >
-                <Search className="w-3.5 h-3.5" />
+                {fetchingUrl ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Link2 className="w-3.5 h-3.5" />
+                )}
               </button>
             </div>
+            {urlError && (
+              <p className="mt-2 flex items-start gap-1.5 text-[11px] text-status-failed">
+                <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
+                {urlError}
+              </p>
+            )}
+            {!urlError && fetchingUrl && (
+              <p className="mt-2 text-[11px] text-ink-faint">Fetching page content…</p>
+            )}
           </div>
         )}
 

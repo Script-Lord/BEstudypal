@@ -1,10 +1,12 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from docling.document_converter import DocumentConverter
-from docling.datamodel.base_models import ConversionStatus
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.datamodel.base_models import ConversionStatus, InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions, TesseractCliOcrOptions
 import tempfile
 import os
 import logging
+import shutil
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,7 +20,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-converter = DocumentConverter()
+
+def create_converter() -> DocumentConverter:
+    pdf_options = PdfPipelineOptions()
+
+    # RapidOCR auto-select is brittle across versions; prefer Tesseract when available
+    # (installed in the Docker image). Digital PDFs still parse with do_ocr=False.
+    if shutil.which("tesseract"):
+        pdf_options.do_ocr = True
+        pdf_options.ocr_options = TesseractCliOcrOptions()
+        logger.info("PDF OCR: using Tesseract CLI")
+    else:
+        pdf_options.do_ocr = False
+        logger.info("PDF OCR: disabled (Tesseract not found; digital PDFs only)")
+
+    return DocumentConverter(
+        format_options={
+            InputFormat.PDF: PdfFormatOption(pipeline_options=pdf_options),
+        }
+    )
+
+
+converter = create_converter()
 
 
 def build_pages(doc, markdown: str, result) -> list[dict]:
