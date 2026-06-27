@@ -141,21 +141,21 @@ export const api = {
   },
 
   // ── Chat: course-level (auth, owner) ────────────────────────────────────────
-  async streamCourseQuery(courseId: string, question: string): Promise<Response> {
+  async streamCourseQuery(courseId: string, question: string, webSearch = false): Promise<Response> {
     const token = await getAuthToken();
     return fetch(`${BASE_URL}/api/courses/${courseId}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, webSearch }),
     });
   },
 
   // ── Chat: public course-level (no auth) ─────────────────────────────────────
-  streamPublicCourseQuery(courseId: string, question: string): Promise<Response> {
+  streamPublicCourseQuery(courseId: string, question: string, webSearch = false): Promise<Response> {
     return fetch(`${BASE_URL}/api/public/courses/${courseId}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, webSearch }),
     });
   },
 

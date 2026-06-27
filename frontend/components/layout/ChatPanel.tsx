@@ -153,6 +153,45 @@ export function ChatPanel({
             className="w-full bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50 pr-16"
             style={{ minHeight: 24, maxHeight: 160 }}
           />
+
+          {onToggleWebSearch && (
+            <div className="flex items-center gap-2 mt-2 pr-12">
+              <button
+                type="button"
+                onClick={() => onToggleWebSearch(!webSearch)}
+                role="switch"
+                aria-checked={webSearch}
+                title={
+                  webSearch
+                    ? 'Web + AI is on — answers may add knowledge beyond your sources'
+                    : 'Turn on Web + AI to expand answers beyond your sources'
+                }
+                className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-all ${
+                  webSearch
+                    ? 'bg-secondary-muted border-secondary/40 text-secondary'
+                    : 'bg-bg-surface border-bg-border text-ink-faint hover:text-ink'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5" />
+                Web + AI
+                <span
+                  className={`ml-0.5 w-7 h-3.5 rounded-full relative transition-colors ${
+                    webSearch ? 'bg-secondary' : 'bg-bg-border'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white transition-all ${
+                      webSearch ? 'left-[15px]' : 'left-0.5'
+                    }`}
+                  />
+                </span>
+              </button>
+              <span className="text-[11px] text-ink-faint hidden sm:block">
+                {webSearch ? 'Expands beyond your sources' : 'Stays within your sources'}
+              </span>
+            </div>
+          )}
+
           <div className="absolute right-14 bottom-3 flex items-center gap-2 pointer-events-none">
             {sourceCount != null && sourceCount > 0 && (
               <span className="text-[11px] text-ink-faint">{sourceCount} sources</span>

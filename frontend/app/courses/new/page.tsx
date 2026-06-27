@@ -173,7 +173,8 @@ export default function NewCoursePage() {
             </div>
           </form>
         </motion.div>
-      </main>
-    </div>
+        </div>
+      </div>
+    </AppShell>
   );
 }
