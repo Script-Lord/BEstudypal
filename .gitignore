@@ -4,8 +4,11 @@ node_modules/
 # Environment (secrets)
 .env
 .env.*.local
+.wm
 backend/.env
+backend/.wm
 frontend/.env.local
+frontend/.wm
 
 # Next.js
 frontend/.next/

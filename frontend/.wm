@@ -1,9 +1,0 @@
-NEXT_PUBLIC_SUPABASE_URL=https://oarbyroxduznofehvpcm.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Ujq80_oC03_rrZvKt0bc_w_6W_BzTba
-NEXT_PUBLIC_API_URL=http://localhost:3001
-
-# Firebase client auth — Firebase Console > Project settings > General > Your apps (Web app config)
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyAxdhZhgoG3uvYwgTK6KeeI87WVqL0yv6U
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=findaroom-1e893.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=findaroom-1e893
-NEXT_PUBLIC_FIREBASE_APP_ID=1:188017172712:web:f3b400eac7c78f8b8ae95d
