@@ -44,7 +44,7 @@ export default function ChatPage() {
   if (authLoading || docLoading) {
     return (
       <div className="min-h-dvh bg-bg-base flex items-center justify-center">
-        <span className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+        <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -56,7 +56,7 @@ export default function ChatPage() {
       header={
         <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 border-b border-bg-border bg-bg-base">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <FileText className="w-3.5 h-3.5 text-secondary shrink-0" />
+            <FileText className="w-3.5 h-3.5 text-accent shrink-0" />
             <span className="text-sm font-medium text-ink truncate">{doc.name}</span>
           </div>
           <div className="hidden md:flex items-center gap-4 shrink-0 text-xs text-ink-faint">

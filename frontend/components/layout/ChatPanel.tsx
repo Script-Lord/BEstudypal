@@ -62,9 +62,9 @@ export function ChatPanel({
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between px-3 sm:px-5 py-3 border-b border-bg-border shrink-0 gap-2">
+      <div className="flex items-center justify-between px-3 sm:px-5 py-3 panel-header shrink-0 gap-2">
         <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-medium text-ink">{title}</h2>
+          <h2 className="text-sm font-semibold text-ink tracking-tight">{title}</h2>
           {subtitle && <p className="text-xs text-ink-faint mt-0.5 truncate">{subtitle}</p>}
         </div>
         <div className="flex items-center gap-1 shrink-0">
@@ -110,7 +110,7 @@ export function ChatPanel({
                       key={s}
                       type="button"
                       onClick={() => onSuggestion(s)}
-                      className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-secondary/40 hover:text-ink hover:bg-bg-elevated transition-all"
+                      className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-elevated transition-all"
                     >
                       {s}
                     </button>
@@ -141,7 +141,7 @@ export function ChatPanel({
       )}
 
       <div className="shrink-0 px-3 sm:px-5 pb-3 sm:pb-5 pt-2">
-        <div className="relative bg-bg-elevated border border-bg-border rounded-2xl px-3 sm:px-4 py-3 focus-within:border-secondary/40 transition-all">
+        <div className="relative input-surface px-3 sm:px-4 py-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -168,7 +168,7 @@ export function ChatPanel({
                 }
                 className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-all ${
                   webSearch
-                    ? 'bg-secondary-muted border-secondary/40 text-secondary'
+                    ? 'bg-accent-muted/60 border-accent/30 text-accent'
                     : 'bg-bg-surface border-bg-border text-ink-faint hover:text-ink'
                 }`}
               >
@@ -176,7 +176,7 @@ export function ChatPanel({
                 Web + AI
                 <span
                   className={`ml-0.5 w-7 h-3.5 rounded-full relative transition-colors ${
-                    webSearch ? 'bg-secondary' : 'bg-bg-border'
+                    webSearch ? 'bg-accent' : 'bg-bg-border'
                   }`}
                 >
                   <span
@@ -201,7 +201,7 @@ export function ChatPanel({
             type="button"
             onClick={onSend}
             disabled={!input.trim() || streaming || disabled}
-            className={`absolute right-2 w-9 h-9 rounded-full bg-secondary hover:bg-secondary-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-lg shadow-secondary/25 ${
+            className={`absolute right-2 w-9 h-9 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-glow ${
               onToggleWebSearch ? 'bottom-2' : 'bottom-2.5'
             }`}
           >

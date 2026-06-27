@@ -1,73 +1,73 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* Light theme (default). */
+  /* Light — warm paper base, teal accent (study / focus) */
   :root {
     color-scheme: light;
-    --color-bg-base: 248 250 252;
+    --color-bg-base: 244 246 249;
     --color-bg-surface: 255 255 255;
-    --color-bg-elevated: 241 245 249;
-    --color-bg-border: 226 232 240;
-    --color-ink: 15 23 42;
-    --color-ink-muted: 71 85 105;
-    --color-ink-faint: 148 163 184;
-    --color-accent: 37 99 235;
-    --color-accent-hover: 29 78 216;
-    --color-secondary: 59 130 246;
-    --color-secondary-hover: 37 99 235;
-    --color-secondary-muted: 59 130 246;
+    --color-bg-elevated: 237 242 247;
+    --color-bg-border: 214 222 232;
+    --color-ink: 17 24 39;
+    --color-ink-muted: 75 85 99;
+    --color-ink-faint: 156 163 175;
+    --color-accent: 13 148 136;
+    --color-accent-hover: 15 118 110;
+    --color-accent-muted: 204 251 241;
+    --color-secondary: 79 70 229;
+    --color-secondary-hover: 67 56 202;
+    --color-secondary-muted: 224 231 255;
     --color-status-pending: 217 119 6;
-    --color-status-processing: 37 99 235;
+    --color-status-processing: 13 148 136;
     --color-status-ready: 22 163 74;
     --color-status-failed: 220 38 38;
   }
 
-  /* Dark theme values, applied when the user explicitly picks dark. */
   :root.dark {
     color-scheme: dark;
-    --color-bg-base: 15 18 22;
-    --color-bg-surface: 29 34 39;
-    --color-bg-elevated: 36 42 48;
-    --color-bg-border: 43 50 57;
-    --color-ink: 235 238 242;
-    --color-ink-muted: 150 158 166;
-    --color-ink-faint: 91 100 109;
-    --color-accent: 59 130 246;
-    --color-accent-hover: 96 165 250;
-    --color-secondary: 96 165 250;
-    --color-secondary-hover: 59 130 246;
-    --color-secondary-muted: 59 130 246;
+    --color-bg-base: 10 14 20;
+    --color-bg-surface: 17 23 31;
+    --color-bg-elevated: 24 32 42;
+    --color-bg-border: 38 48 62;
+    --color-ink: 236 239 244;
+    --color-ink-muted: 156 163 175;
+    --color-ink-faint: 107 114 128;
+    --color-accent: 45 212 191;
+    --color-accent-hover: 20 184 166;
+    --color-accent-muted: 19 78 74;
+    --color-secondary: 129 140 248;
+    --color-secondary-hover: 165 180 252;
+    --color-secondary-muted: 30 41 82;
     --color-status-pending: 245 158 11;
-    --color-status-processing: 59 130 246;
-    --color-status-ready: 34 197 94;
-    --color-status-failed: 239 68 68;
+    --color-status-processing: 45 212 191;
+    --color-status-ready: 52 211 153;
+    --color-status-failed: 248 113 113;
   }
 
-  /* No-JS / pre-hydration fallback: honour the OS preference
-     unless the user has explicitly chosen the light theme. */
   @media (prefers-color-scheme: dark) {
     :root:not(.light):not(.dark) {
       color-scheme: dark;
-      --color-bg-base: 15 18 22;
-      --color-bg-surface: 29 34 39;
-      --color-bg-elevated: 36 42 48;
-      --color-bg-border: 43 50 57;
-      --color-ink: 235 238 242;
-      --color-ink-muted: 150 158 166;
-      --color-ink-faint: 91 100 109;
-      --color-accent: 59 130 246;
-      --color-accent-hover: 96 165 250;
-      --color-secondary: 96 165 250;
-      --color-secondary-hover: 59 130 246;
-      --color-secondary-muted: 59 130 246;
+      --color-bg-base: 10 14 20;
+      --color-bg-surface: 17 23 31;
+      --color-bg-elevated: 24 32 42;
+      --color-bg-border: 38 48 62;
+      --color-ink: 236 239 244;
+      --color-ink-muted: 156 163 175;
+      --color-ink-faint: 107 114 128;
+      --color-accent: 45 212 191;
+      --color-accent-hover: 20 184 166;
+      --color-accent-muted: 19 78 74;
+      --color-secondary: 129 140 248;
+      --color-secondary-hover: 165 180 252;
+      --color-secondary-muted: 30 41 82;
       --color-status-pending: 245 158 11;
-      --color-status-processing: 59 130 246;
-      --color-status-ready: 34 197 94;
-      --color-status-failed: 239 68 68;
+      --color-status-processing: 45 212 191;
+      --color-status-ready: 52 211 153;
+      --color-status-failed: 248 113 113;
     }
   }
 
@@ -89,12 +89,12 @@
   }
 
   ::selection {
-    @apply bg-accent/30 text-ink;
+    @apply bg-accent/25 text-ink;
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
@@ -104,6 +104,37 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-ink-faint;
+  }
+}
+
+@layer components {
+  .shell-bg {
+    background-color: rgb(var(--color-bg-base));
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -30%, rgb(var(--color-accent) / 0.07), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgb(var(--color-secondary) / 0.04), transparent 50%);
+  }
+
+  .panel-chrome {
+    @apply bg-bg-surface border border-bg-border shadow-panel;
+  }
+
+  .panel-header {
+    @apply bg-bg-elevated/60 border-b border-bg-border backdrop-blur-sm;
+  }
+
+  .nav-active {
+    @apply bg-accent text-white shadow-md shadow-accent/20;
+  }
+
+  .nav-active-subtle {
+    @apply bg-accent-muted text-accent;
+  }
+
+  .input-surface {
+    @apply bg-bg-elevated border border-bg-border rounded-xl
+      focus-within:border-accent/50 focus-within:ring-2 focus-within:ring-accent/15
+      transition-all duration-200;
   }
 }
 

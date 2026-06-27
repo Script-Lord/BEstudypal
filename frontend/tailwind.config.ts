@@ -23,12 +23,12 @@ const config: Config = {
         accent: {
           DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
           hover: 'rgb(var(--color-accent-hover) / <alpha-value>)',
-          muted: 'rgb(var(--color-accent) / 0.15)',
+          muted: 'rgb(var(--color-accent-muted) / <alpha-value>)',
         },
         secondary: {
           DEFAULT: 'rgb(var(--color-secondary) / <alpha-value>)',
           hover: 'rgb(var(--color-secondary-hover) / <alpha-value>)',
-          muted: 'rgb(var(--color-secondary-muted) / 0.12)',
+          muted: 'rgb(var(--color-secondary-muted) / <alpha-value>)',
         },
         status: {
           pending: 'rgb(var(--color-status-pending) / <alpha-value>)',
@@ -38,8 +38,16 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+      },
+      boxShadow: {
+        panel: '0 1px 3px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.04)',
+        'panel-lg': '0 4px 24px rgb(0 0 0 / 0.12)',
+        glow: '0 0 20px rgb(var(--color-accent) / 0.15)',
+      },
+      borderRadius: {
+        '2.5xl': '1.25rem',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

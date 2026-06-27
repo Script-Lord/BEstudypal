@@ -67,7 +67,7 @@ export default function DashboardPage() {
   return (
     <AppShell
       header={
-        <div className="shrink-0 px-3 sm:px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 border-b border-bg-border bg-bg-base">
+        <div className="shrink-0 px-3 sm:px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 panel-header">
           <div className="flex items-center gap-1 bg-bg-surface border border-bg-border rounded-lg p-1 w-full sm:w-auto">
             {(['courses', 'documents'] as Tab[]).map(t => (
               <button

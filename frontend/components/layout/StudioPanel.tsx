@@ -39,8 +39,8 @@ export function StudioPanel({ children, footerAction, defaultOpen = true }: Stud
 
   const panelBody = (
     <>
-      <div className="flex items-center justify-between px-4 py-3.5 border-b border-bg-border shrink-0">
-        <h2 className="text-sm font-medium text-ink">Studio</h2>
+      <div className="flex items-center justify-between px-4 py-3 panel-header shrink-0">
+        <h2 className="text-sm font-semibold text-ink tracking-tight">Studio</h2>
         <button
           type="button"
           onClick={close}
@@ -60,20 +60,20 @@ export function StudioPanel({ children, footerAction, defaultOpen = true }: Stud
               <button
                 key={label}
                 type="button"
-                className="group flex items-center gap-2 px-2.5 py-3 rounded-xl bg-bg-elevated/60 border border-bg-border hover:border-secondary/30 hover:bg-secondary-muted active:bg-secondary-muted transition-all text-left"
+                className="group flex items-center gap-2 px-2.5 py-3 rounded-xl bg-bg-elevated/50 border border-bg-border hover:border-accent/25 hover:bg-accent-muted/30 active:bg-accent-muted/40 transition-all text-left"
               >
-                <span className="w-7 h-7 rounded-lg bg-secondary-muted flex items-center justify-center shrink-0">
-                  <Icon className="w-3.5 h-3.5 text-secondary" />
+                <span className="w-7 h-7 rounded-lg bg-accent-muted flex items-center justify-center shrink-0">
+                  <Icon className="w-3.5 h-3.5 text-accent" />
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="block text-[11px] font-medium text-ink truncate">{label}</span>
                   {badge && (
-                    <span className="text-[9px] font-semibold uppercase tracking-wide text-secondary/80">
+                    <span className="text-[9px] font-semibold uppercase tracking-wide text-accent/70">
                       {badge}
                     </span>
                   )}
                 </span>
-                <ChevronRight className="w-3 h-3 text-ink-faint group-hover:text-secondary shrink-0" />
+                <ChevronRight className="w-3 h-3 text-ink-faint group-hover:text-accent shrink-0" />
               </button>
             );
           })}
@@ -113,7 +113,7 @@ export function StudioPanel({ children, footerAction, defaultOpen = true }: Stud
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="fixed inset-y-0 right-0 z-50 w-[min(100vw,320px)] bg-bg-surface border-l border-bg-border flex flex-col shadow-2xl md:hidden"
+              className="fixed inset-y-0 right-0 z-50 w-[min(100vw,320px)] panel-chrome flex flex-col shadow-panel-lg md:hidden"
             >
               {panelBody}
             </motion.aside>
@@ -125,7 +125,7 @@ export function StudioPanel({ children, footerAction, defaultOpen = true }: Stud
 
   if (!isOpen) {
     return (
-      <aside className="w-12 shrink-0 bg-bg-surface border-l border-bg-border flex flex-col items-center py-3.5 rounded-l-2xl ml-2 my-2">
+      <aside className="w-11 shrink-0 panel-chrome flex flex-col items-center py-3.5 rounded-l-2xl">
         <button
           type="button"
           onClick={() => setDesktopOpen(true)}
@@ -148,7 +148,7 @@ export function StudioPanel({ children, footerAction, defaultOpen = true }: Stud
       animate={{ width: 320, opacity: 1 }}
       exit={{ width: 0, opacity: 0 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="shrink-0 bg-bg-surface border-l border-bg-border flex flex-col overflow-hidden rounded-l-2xl ml-2 my-2"
+      className="shrink-0 panel-chrome flex flex-col overflow-hidden rounded-l-2xl"
     >
       {panelBody}
     </motion.aside>

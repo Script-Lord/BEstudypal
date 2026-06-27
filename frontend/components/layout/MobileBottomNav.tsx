@@ -22,29 +22,27 @@ export function MobileBottomNav() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  const tabClass = (active: boolean) =>
+    `flex flex-col items-center justify-center gap-0.5 min-w-[3.5rem] py-1.5 px-2 rounded-xl transition-all duration-150 ${
+      active ? 'text-accent bg-accent-muted/50' : 'text-ink-faint'
+    }`;
+
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border bg-bg-base/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
-      <div className="flex items-stretch justify-around px-1 pt-1.5 pb-1.5">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border bg-bg-surface/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] shadow-panel-lg">
+      <div className="flex items-stretch justify-around px-2 pt-1.5 pb-1.5">
         {NAV_ITEMS.map(item => {
           const { href, icon: Icon, label } = item;
           const match = 'match' in item ? item.match : undefined;
           const active = isActive(href, match);
-          const isExplore = href === '/explore';
           return (
             <button
               key={label}
               type="button"
               onClick={() => href && router.push(href)}
-              className={`flex flex-col items-center justify-center gap-0.5 min-w-[4rem] py-1 rounded-xl transition-all ${
-                active
-                  ? 'text-secondary'
-                  : isExplore
-                    ? 'text-accent/80'
-                    : 'text-ink-faint'
-              }`}
+              className={tabClass(active)}
             >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium">{label}</span>
+              <Icon className="w-5 h-5" strokeWidth={active ? 2.25 : 1.75} />
+              <span className="text-[10px] font-semibold">{label}</span>
             </button>
           );
         })}
@@ -52,19 +50,19 @@ export function MobileBottomNav() {
         <button
           type="button"
           onClick={() => router.push('/courses/new')}
-          className="flex flex-col items-center justify-center gap-0.5 min-w-[4rem] py-1 rounded-xl text-ink-faint"
+          className={tabClass(false)}
         >
-          <Plus className="w-5 h-5" />
-          <span className="text-[10px] font-medium">New</span>
+          <Plus className="w-5 h-5" strokeWidth={1.75} />
+          <span className="text-[10px] font-semibold">New</span>
         </button>
 
         <button
           type="button"
           onClick={() => router.push(user ? '/dashboard' : '/login')}
-          className="flex flex-col items-center justify-center gap-0.5 min-w-[4rem] py-1 rounded-xl text-secondary"
+          className={`${tabClass(false)} text-accent`}
         >
-          {user ? <BookOpen className="w-5 h-5" /> : <LogIn className="w-5 h-5" />}
-          <span className="text-[10px] font-medium">{user ? 'StudyPal' : 'Sign in'}</span>
+          {user ? <BookOpen className="w-5 h-5" strokeWidth={1.75} /> : <LogIn className="w-5 h-5" strokeWidth={1.75} />}
+          <span className="text-[10px] font-semibold">{user ? 'StudyPal' : 'Sign in'}</span>
         </button>
       </div>
     </nav>

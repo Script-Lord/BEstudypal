@@ -90,7 +90,7 @@ export function ChatWindow({ documentId, documentName }: Props) {
                   <button
                     key={s}
                     onClick={() => sendMessage(s)}
-                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-secondary/40 hover:text-ink hover:bg-bg-elevated transition-all duration-150"
+                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-elevated transition-all duration-150"
                   >
                     {s}
                   </button>
@@ -122,7 +122,7 @@ export function ChatWindow({ documentId, documentName }: Props) {
 
       {/* Input */}
       <div className="shrink-0 px-6 pb-6 pt-2">
-        <div className="flex items-end gap-3 bg-bg-elevated border border-bg-border rounded-2xl px-4 py-3 focus-within:border-secondary/40 transition-all duration-150">
+        <div className="flex items-end gap-3 input-surface px-4 py-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -137,7 +137,7 @@ export function ChatWindow({ documentId, documentName }: Props) {
           <button
             onClick={handleSend}
             disabled={!input.trim() || streaming}
-            className="shrink-0 w-8 h-8 rounded-full bg-secondary hover:bg-secondary-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150 shadow-lg shadow-secondary/25"
+            className="shrink-0 w-8 h-8 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150 shadow-glow"
           >
             {streaming ? (
               <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

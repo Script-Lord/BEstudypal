@@ -25,7 +25,7 @@ export function MessageBubble({ role, content, sources, streaming }: Props) {
       <div
         className={`
           shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold mt-0.5
-          ${isUser ? 'bg-accent text-white' : 'bg-bg-elevated text-ink-muted border border-bg-border'}
+          ${isUser ? 'bg-accent text-white' : 'bg-accent-muted text-accent border border-accent/20'}
         `}
       >
         {isUser ? 'U' : 'AI'}
@@ -37,8 +37,8 @@ export function MessageBubble({ role, content, sources, streaming }: Props) {
           className={`
             px-4 py-3 rounded-2xl text-sm leading-relaxed
             ${isUser
-              ? 'bg-accent text-white rounded-tr-sm'
-              : 'bg-bg-surface border border-bg-border rounded-tl-sm text-ink'
+              ? 'bg-accent text-white rounded-tr-sm shadow-sm'
+              : 'bg-bg-elevated border border-bg-border rounded-tl-sm text-ink'
             }
           `}
         >

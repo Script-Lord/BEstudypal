@@ -51,7 +51,7 @@ export default function PublicCourseDetailPage() {
 
   if (loading) return (
     <div className="min-h-dvh bg-bg-base flex items-center justify-center">
-      <span className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+      <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   );
   if (!course) return null;
@@ -64,9 +64,9 @@ export default function PublicCourseDetailPage() {
       header={
         <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 border-b border-bg-border bg-bg-base">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <BookOpen className="w-3.5 h-3.5 text-secondary shrink-0" />
+            <BookOpen className="w-3.5 h-3.5 text-accent shrink-0" />
             <span className="text-sm font-medium text-ink truncate">{course.title}</span>
-            <span className="text-xs text-secondary/80 font-mono shrink-0">{course.code}</span>
+            <span className="text-xs text-accent/80 font-mono shrink-0">{course.code}</span>
           </div>
           <div className="hidden md:flex items-center gap-3 shrink-0 text-xs text-ink-faint">
             <span>{course.level}</span>
@@ -139,7 +139,7 @@ export default function PublicCourseDetailPage() {
                     key={s}
                     type="button"
                     onClick={() => sendMessage(s, webSearch)}
-                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-secondary/40 hover:text-ink hover:bg-bg-elevated transition-all"
+                    className="text-left text-xs text-ink-muted border border-bg-border rounded-xl px-3.5 py-3 hover:border-accent/40 hover:text-ink hover:bg-bg-elevated transition-all"
                   >
                     {s}
                   </button>

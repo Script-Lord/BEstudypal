@@ -82,8 +82,8 @@ export function SourcesPanel({
 
   const panelBody = (
     <>
-      <div className="flex items-center justify-between px-4 py-3.5 border-b border-bg-border shrink-0">
-        <h2 className="text-sm font-medium text-ink">Sources</h2>
+      <div className="flex items-center justify-between px-4 py-3 panel-header shrink-0">
+        <h2 className="text-sm font-semibold text-ink tracking-tight">Sources</h2>
         <button
           type="button"
           onClick={close}
@@ -99,9 +99,9 @@ export function SourcesPanel({
           <button
             type="button"
             onClick={onAdd}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-bg-border text-sm font-medium text-ink hover:border-secondary/40 hover:bg-bg-elevated transition-all"
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-accent/30 text-sm font-medium text-accent hover:bg-accent-muted/40 hover:border-accent/50 transition-all"
           >
-            <Plus className="w-4 h-4 text-secondary" />
+            <Plus className="w-4 h-4" />
             Add sources
           </button>
         )}
@@ -149,7 +149,7 @@ export function SourcesPanel({
               aria-checked={allSelected}
               className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${
                 allSelected
-                  ? 'bg-secondary border-secondary text-white'
+                  ? 'bg-accent border-accent text-white'
                   : 'border-bg-border bg-bg-elevated text-transparent'
               }`}
             >
@@ -179,10 +179,10 @@ export function SourcesPanel({
                     onOpen && isReady ? 'cursor-pointer hover:bg-bg-elevated active:bg-bg-elevated' : 'hover:bg-bg-elevated/60'
                   }`}
                 >
-                  <span className="w-7 h-7 rounded-lg bg-secondary-muted flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-accent-muted flex items-center justify-center shrink-0">
                     {isProcessing
-                      ? <Loader2 className="w-3.5 h-3.5 text-secondary animate-spin" />
-                      : <Icon className="w-3.5 h-3.5 text-secondary" />}
+                      ? <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />
+                      : <Icon className="w-3.5 h-3.5 text-accent" />}
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-ink truncate">{doc.name}</p>
@@ -212,7 +212,7 @@ export function SourcesPanel({
                       aria-checked={isChecked}
                       className={`w-5 h-5 rounded flex items-center justify-center border transition-all shrink-0 ${
                         isChecked
-                          ? 'bg-secondary border-secondary text-white'
+                          ? 'bg-accent border-accent text-white'
                           : 'border-bg-border bg-bg-elevated text-transparent'
                       }`}
                     >
@@ -247,7 +247,7 @@ export function SourcesPanel({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="fixed inset-y-0 left-0 z-50 w-[min(100vw,320px)] bg-bg-surface border-r border-bg-border flex flex-col shadow-2xl md:hidden"
+              className="fixed inset-y-0 left-0 z-50 w-[min(100vw,320px)] panel-chrome flex flex-col shadow-panel-lg md:hidden"
             >
               {panelBody}
             </motion.aside>
@@ -259,7 +259,7 @@ export function SourcesPanel({
 
   if (!isOpen) {
     return (
-      <aside className="w-12 shrink-0 bg-bg-surface border border-bg-border flex flex-col items-center py-3.5 rounded-2xl mr-2 my-2">
+      <aside className="w-11 shrink-0 panel-chrome flex flex-col items-center py-3.5 rounded-2xl">
         <button
           type="button"
           onClick={() => setDesktopOpen(true)}
@@ -281,7 +281,7 @@ export function SourcesPanel({
       initial={{ width: 0, opacity: 0 }}
       animate={{ width: 320, opacity: 1 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="shrink-0 bg-bg-surface border border-bg-border flex flex-col overflow-hidden rounded-2xl mr-2 my-2"
+      className="shrink-0 panel-chrome flex flex-col overflow-hidden rounded-2xl"
     >
       {panelBody}
     </motion.aside>

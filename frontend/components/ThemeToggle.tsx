@@ -45,11 +45,13 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
       onClick={toggle}
       aria-label={`Switch to ${nextLabel} mode`}
       title={`Switch to ${nextLabel} mode`}
-      className={`fixed bottom-4 left-4 z-[60] flex items-center justify-center w-10 h-10 rounded-xl
+      className={`fixed z-[60] flex items-center justify-center w-10 h-10 rounded-xl
         bg-bg-surface/90 backdrop-blur border border-bg-border text-ink-muted
-        hover:text-ink hover:border-accent/40 shadow-lg shadow-black/10
+        hover:text-accent hover:border-accent/40 shadow-panel
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50
-        transition-colors duration-150 ${className}`}
+        transition-colors duration-150
+        bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-4
+        md:bottom-4 md:left-4 md:right-auto ${className}`}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span

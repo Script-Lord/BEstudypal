@@ -137,7 +137,7 @@ export default function CourseDetailPage() {
 
   if (authLoading || loading) return (
     <div className="min-h-dvh bg-bg-base flex items-center justify-center">
-      <span className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+      <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   );
   if (!course) return null;
@@ -150,11 +150,11 @@ export default function CourseDetailPage() {
     <AppShell
       header={
         <>
-          <div className="shrink-0 px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 border-b border-bg-border bg-bg-base min-h-[44px]">
+          <div className="shrink-0 px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 panel-header min-h-[44px]">
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <BookOpen className="w-3.5 h-3.5 text-secondary shrink-0" />
+              <BookOpen className="w-3.5 h-3.5 text-accent shrink-0" />
               <span className="text-sm font-medium text-ink truncate">{course.title}</span>
-              <span className="text-xs text-secondary/80 font-mono shrink-0">{course.code}</span>
+              <span className="text-xs text-accent/80 font-mono shrink-0">{course.code}</span>
               <span className="text-xs text-ink-faint shrink-0 hidden md:inline">{course.level}</span>
             </div>
             <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
