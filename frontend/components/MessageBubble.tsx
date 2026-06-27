@@ -45,7 +45,7 @@ export function MessageBubble({ role, content, sources, streaming }: Props) {
           {isUser ? (
             <p className="whitespace-pre-wrap">{content}</p>
           ) : (
-            <div className="prose prose-invert prose-sm max-w-none
+            <div className="prose dark:prose-invert prose-sm max-w-none
               prose-p:my-1 prose-p:leading-relaxed
               prose-headings:text-ink prose-headings:font-semibold
               prose-code:bg-bg-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:text-ink

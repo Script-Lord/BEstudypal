@@ -5,6 +5,7 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light theme (default). */
   :root {
     color-scheme: light;
     --color-bg-base: 248 250 252;
@@ -25,8 +26,31 @@
     --color-status-failed: 220 38 38;
   }
 
+  /* Dark theme values, applied when the user explicitly picks dark. */
+  :root.dark {
+    color-scheme: dark;
+    --color-bg-base: 15 18 22;
+    --color-bg-surface: 29 34 39;
+    --color-bg-elevated: 36 42 48;
+    --color-bg-border: 43 50 57;
+    --color-ink: 235 238 242;
+    --color-ink-muted: 150 158 166;
+    --color-ink-faint: 91 100 109;
+    --color-accent: 59 130 246;
+    --color-accent-hover: 96 165 250;
+    --color-secondary: 96 165 250;
+    --color-secondary-hover: 59 130 246;
+    --color-secondary-muted: 59 130 246;
+    --color-status-pending: 245 158 11;
+    --color-status-processing: 59 130 246;
+    --color-status-ready: 34 197 94;
+    --color-status-failed: 239 68 68;
+  }
+
+  /* No-JS / pre-hydration fallback: honour the OS preference
+     unless the user has explicitly chosen the light theme. */
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not(.light):not(.dark) {
       color-scheme: dark;
       --color-bg-base: 15 18 22;
       --color-bg-surface: 29 34 39;
@@ -60,6 +84,7 @@
   body {
     @apply bg-bg-base text-ink font-sans;
     min-height: 100dvh;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   ::selection {
