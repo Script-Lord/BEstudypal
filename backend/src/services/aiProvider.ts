@@ -37,6 +37,39 @@ class OpenAIProvider implements AIProvider {
   }
 }
 
+// ─── Gemini (OpenAI-compatible endpoint) ──────────────────────────────────────
+// Google exposes an OpenAI-compatible API, so we reuse the OpenAI SDK and just
+// point it at Gemini's base URL.
+
+class GeminiProvider implements AIProvider {
+  private get client() {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) throw new Error('GEMINI_API_KEY is not set. Add the key or switch AI_PROVIDER.');
+    return new OpenAI({
+      apiKey: key,
+      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+    });
+  }
+  private model = process.env.GEMINI_MODEL ?? 'gemini-2.0-flash';
+
+  async chat(messages: ChatMessage[]): Promise<string> {
+    const res = await this.client.chat.completions.create({ model: this.model, messages });
+    return res.choices[0].message.content ?? '';
+  }
+
+  async chatStream(messages: ChatMessage[], onChunk: (chunk: string) => void): Promise<void> {
+    const stream = await this.client.chat.completions.create({
+      model: this.model,
+      messages,
+      stream: true,
+    });
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content;
+      if (delta) onChunk(delta);
+    }
+  }
+}
+
 // ─── Snwolley Agents ─────────────────────────────────────────────────────────
 // The Agents API is not streaming, so chatStream emits the full reply in one
 // chunk. chat_id continuity is handled per-session via the snwolleySessionMap.
@@ -97,8 +130,9 @@ class SnwolleyProvider implements AIProvider {
 export function getAIProvider(): AIProvider {
   const provider = process.env.AI_PROVIDER ?? 'openai';
   if (provider === 'openai') return new OpenAIProvider();
+  if (provider === 'gemini') return new GeminiProvider();
   if (provider === 'snwolley') return new SnwolleyProvider();
-  throw new Error(`Unknown AI provider: ${provider}. Supported: openai, snwolley`);
+  throw new Error(`Unknown AI provider: ${provider}. Supported: openai, gemini, snwolley`);
 }
 
 export { snwolleySessionMap };
