@@ -3,15 +3,13 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, Compass, LayoutGrid, LogIn, LogOut, MessageSquare, Plus, PanelLeft,
+  BookOpen, Compass, LogIn, LogOut, PanelLeft,
 } from 'lucide-react';
 import { useAccount } from '../../hooks/useAccount';
 import { signOut } from '../../lib/auth';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
   { href: '/explore', icon: Compass, label: 'Explore' },
-  { href: null, icon: MessageSquare, label: 'Chat', match: /\/courses\/|\/chat\// },
 ] as const;
 
 export function LeftNav() {
@@ -21,11 +19,9 @@ export function LeftNav() {
   const [expanded, setExpanded] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
-  const isActive = (href: string | null, match?: RegExp) => {
-    if (match) return match.test(pathname) || pathname.startsWith('/explore/');
-    if (!href) return false;
-    return pathname === href || pathname.startsWith(`${href}/`);
-  };
+  const isHome = pathname === '/dashboard' || pathname.startsWith('/courses/') || pathname.startsWith('/chat/');
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -56,18 +52,8 @@ export function LeftNav() {
 
       <button
         type="button"
-        onClick={() => router.push('/courses/new')}
-        className={`${row()} text-ink-faint hover:text-accent hover:bg-accent-muted/60 mb-1`}
-        aria-label="New course"
-      >
-        <Plus className="w-4 h-4 shrink-0" />
-        {expanded && <span className="text-sm font-medium whitespace-nowrap">New course</span>}
-      </button>
-
-      <button
-        type="button"
         onClick={() => router.push('/dashboard')}
-        className={`${row()} text-accent mb-3`}
+        className={`${row(isHome)} ${isHome ? 'text-accent' : 'text-ink-faint hover:text-accent hover:bg-accent-muted/60'} mb-3`}
         aria-label="StudyPal home"
       >
         <BookOpen className="w-4 h-4 shrink-0" />
@@ -77,13 +63,12 @@ export function LeftNav() {
       <div className="flex flex-col gap-0.5 flex-1 px-1">
         {NAV_ITEMS.map(item => {
           const { href, icon: Icon, label } = item;
-          const match = 'match' in item ? item.match : undefined;
-          const active = isActive(href, match);
+          const active = isActive(href);
           return (
             <button
               key={label}
               type="button"
-              onClick={() => href && router.push(href)}
+              onClick={() => router.push(href)}
               title={label}
               className={`${row(active)} ${
                 active ? '' : 'text-ink-faint hover:text-ink hover:bg-bg-elevated'

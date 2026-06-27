@@ -1,14 +1,12 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  BookOpen, Compass, LayoutGrid, LogIn, MessageSquare, Plus,
-} from 'lucide-react';
+import { BookOpen, Compass, LogIn, Plus } from 'lucide-react';
 import { useAccount } from '../../hooks/useAccount';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', icon: LayoutGrid, label: 'Home' },
+  { href: '/dashboard', icon: BookOpen, label: 'StudyPal', match: /^\/(dashboard|courses|chat)(\/|$)/ },
   { href: '/explore', icon: Compass, label: 'Explore' },
-  { href: null, icon: MessageSquare, label: 'Chat', match: /\/courses\/|\/chat\/|\/explore\// },
+  { href: '/courses/new', icon: Plus, label: 'New' },
 ] as const;
 
 export function MobileBottomNav() {
@@ -16,16 +14,40 @@ export function MobileBottomNav() {
   const router = useRouter();
   const { user } = useAccount();
 
-  const isActive = (href: string | null, match?: RegExp) => {
+  const isActive = (href: string, match?: RegExp) => {
     if (match) return match.test(pathname);
-    if (!href) return false;
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   const tabClass = (active: boolean) =>
-    `flex flex-col items-center justify-center gap-0.5 min-w-[3.5rem] py-1.5 px-2 rounded-xl transition-all duration-150 ${
+    `flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 px-2 rounded-xl transition-all duration-150 ${
       active ? 'text-accent bg-accent-muted/50' : 'text-ink-faint'
     }`;
+
+  if (!user) {
+    return (
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border bg-bg-surface/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] shadow-panel-lg">
+        <div className="flex items-stretch justify-around px-4 pt-1.5 pb-1.5">
+          <button
+            type="button"
+            onClick={() => router.push('/explore')}
+            className={tabClass(pathname === '/explore' || pathname.startsWith('/explore/'))}
+          >
+            <Compass className="w-5 h-5" strokeWidth={1.75} />
+            <span className="text-[10px] font-semibold">Explore</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push('/login')}
+            className={`${tabClass(false)} text-accent`}
+          >
+            <LogIn className="w-5 h-5" strokeWidth={1.75} />
+            <span className="text-[10px] font-semibold">Sign in</span>
+          </button>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bg-border bg-bg-surface/95 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] shadow-panel-lg">
@@ -38,7 +60,7 @@ export function MobileBottomNav() {
             <button
               key={label}
               type="button"
-              onClick={() => href && router.push(href)}
+              onClick={() => router.push(href)}
               className={tabClass(active)}
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.25 : 1.75} />
@@ -46,24 +68,6 @@ export function MobileBottomNav() {
             </button>
           );
         })}
-
-        <button
-          type="button"
-          onClick={() => router.push('/courses/new')}
-          className={tabClass(false)}
-        >
-          <Plus className="w-5 h-5" strokeWidth={1.75} />
-          <span className="text-[10px] font-semibold">New</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => router.push(user ? '/dashboard' : '/login')}
-          className={`${tabClass(false)} text-accent`}
-        >
-          {user ? <BookOpen className="w-5 h-5" strokeWidth={1.75} /> : <LogIn className="w-5 h-5" strokeWidth={1.75} />}
-          <span className="text-[10px] font-semibold">{user ? 'StudyPal' : 'Sign in'}</span>
-        </button>
       </div>
     </nav>
   );

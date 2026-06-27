@@ -109,27 +109,38 @@ export async function storeChunks(
   _embeddings: number[][],   // unused
   pages: Array<{ page_number: number; text: string }>
 ): Promise<void> {
+  if (chunks.length === 0) return;
+
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+
+    const values: unknown[] = [];
+    const rows: string[] = [];
+    let paramIdx = 1;
 
     for (let i = 0; i < chunks.length; i++) {
       const pageNum = pages.length > 0
         ? Math.floor((i / chunks.length) * pages.length) + 1
         : null;
 
-      await client.query(
-        `INSERT INTO chunks (document_id, user_id, content, metadata, chunk_index)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [
-          documentId,
-          userId,
-          chunks[i],
-          JSON.stringify({ page_number: pageNum }),
-          i,
-        ]
+      rows.push(
+        `($${paramIdx++}, $${paramIdx++}, $${paramIdx++}, $${paramIdx++}, $${paramIdx++})`
+      );
+      values.push(
+        documentId,
+        userId,
+        chunks[i],
+        JSON.stringify({ page_number: pageNum }),
+        i
       );
     }
+
+    await client.query(
+      `INSERT INTO chunks (document_id, user_id, content, metadata, chunk_index)
+       VALUES ${rows.join(', ')}`,
+      values
+    );
 
     await client.query('COMMIT');
   } catch (err) {

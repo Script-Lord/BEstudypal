@@ -38,9 +38,11 @@ const worker = new Worker<DocumentJobData>(
     await job.updateProgress(10);
     const fileBuffer = await downloadFromStorage(storagePath);
 
-    // 2. Parse (officeparser locally, Docling as fallback)
+    // 2. Parse (pdf-parse / mammoth locally, Docling as fallback)
     await job.updateProgress(20);
+    const parseStart = Date.now();
     const { markdown, pages } = await parseDocument(fileBuffer, fileName);
+    console.log(`[Worker] Parsed ${fileName} in ${Date.now() - parseStart}ms`);
 
     if (!markdown || markdown.trim().length === 0) {
       throw new Error('Document parser returned empty content');
@@ -49,6 +51,7 @@ const worker = new Worker<DocumentJobData>(
     // 3. Chunk
     await job.updateProgress(50);
     const chunks = chunkText(markdown);
+    console.log(`[Worker] ${chunks.length} chunks from ${markdown.length} chars`);
 
     if (chunks.length === 0) {
       throw new Error('No chunks generated from document');
@@ -60,7 +63,9 @@ const worker = new Worker<DocumentJobData>(
 
     // 5. Store
     await job.updateProgress(80);
+    const storeStart = Date.now();
     await storeChunks(documentId, userId, chunks, embeddings, pages);
+    console.log(`[Worker] Stored chunks in ${Date.now() - storeStart}ms`);
 
     // 6. Mark ready
     await updateDocumentStatus(documentId, 'ready', {

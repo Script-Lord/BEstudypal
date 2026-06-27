@@ -1,12 +1,12 @@
 import axios from 'axios';
 import FormData from 'form-data';
-import { OfficeConverter, SupportedFileType } from 'officeparser';
+import mammoth from 'mammoth';
+import pdf from 'pdf-parse';
 import { describeImageBuffer } from './snwolley';
 
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const TEXT_EXTS = new Set(['.txt', '.md', '.markdown']);
-const LEGACY_OFFICE_EXTS = new Set(['.doc', '.ppt']);
-const LOCAL_PARSE_EXTS = new Set(['.pdf', '.docx', '.pptx']);
+const LEGACY_OFFICE_EXTS = new Set(['.doc', '.ppt', '.pptx']);
 
 function getExt(fileName: string): string {
   return '.' + (fileName.split('.').pop()?.toLowerCase() ?? '');
@@ -45,11 +45,11 @@ export async function parseDocument(
 
   const ext = getExt(fileName);
 
-  if (!LEGACY_OFFICE_EXTS.has(ext) && LOCAL_PARSE_EXTS.has(ext)) {
+  if (!LEGACY_OFFICE_EXTS.has(ext)) {
     try {
       const result = await parseWithLocalLibs(fileBuffer, fileName);
       if (result.markdown.trim().length > 0) {
-        console.log(`[docProcessor] Parsed ${fileName} with officeparser`);
+        console.log(`[docProcessor] Parsed ${fileName} locally (${ext})`);
         return result;
       }
     } catch (err) {
@@ -82,15 +82,40 @@ async function parseWithLocalLibs(
   fileBuffer: Buffer,
   fileName: string
 ): Promise<DoclingResult> {
-  const fileType = getExt(fileName).slice(1) as SupportedFileType;
+  const ext = getExt(fileName);
 
-  const { value } = await OfficeConverter.convert(fileBuffer, 'md', {
-    parseConfig: { fileType },
-  });
+  if (ext === '.pdf') {
+    return parsePdf(fileBuffer);
+  }
 
-  const text = (typeof value === 'string' ? value : '').trim();
+  if (ext === '.docx') {
+    return parseDocx(fileBuffer);
+  }
+
+  throw new Error(`No local parser for ${ext}`);
+}
+
+async function parsePdf(fileBuffer: Buffer): Promise<DoclingResult> {
+  const data = await pdf(fileBuffer);
+  const text = data.text.trim();
+
   if (!text) {
-    throw new Error('officeparser returned empty content');
+    throw new Error('pdf-parse returned empty content');
+  }
+
+  return {
+    markdown: text,
+    pages: [{ page_number: 1, text }],
+    metadata: { page_count: data.numpages || 1 },
+  };
+}
+
+async function parseDocx(fileBuffer: Buffer): Promise<DoclingResult> {
+  const { value } = await mammoth.extractRawText({ buffer: fileBuffer });
+  const text = value.trim();
+
+  if (!text) {
+    throw new Error('mammoth returned empty content');
   }
 
   return {
