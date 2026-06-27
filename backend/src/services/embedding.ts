@@ -1,19 +1,18 @@
-import OpenAI from 'openai';
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+/**
+ * Text chunking — no external embedding API needed.
+ * Similarity search uses PostgreSQL full-text search (tsvector/tsquery).
+ */
 
 const CHUNK_CHARS = 512 * 4;   // ~512 tokens × 4 chars/token
 const OVERLAP_CHARS = 50 * 4;  // ~50 token overlap
 
 export function chunkText(text: string): string[] {
-  // Prefer splitting on paragraph or sentence boundaries
   const chunks: string[] = [];
   let start = 0;
 
   while (start < text.length) {
     let end = Math.min(start + CHUNK_CHARS, text.length);
 
-    // Try to snap to a paragraph boundary within the last 20% of the chunk
     if (end < text.length) {
       const searchStart = start + Math.floor(CHUNK_CHARS * 0.8);
       const slice = text.slice(searchStart, end);
@@ -36,25 +35,12 @@ export function chunkText(text: string): string[] {
   return chunks;
 }
 
-export async function generateEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
-    model: 'text-embedding-3-small',
-    input: text.slice(0, 8000),
-  });
-  return response.data[0].embedding;
+// Kept for API compatibility with documentWorker — returns empty arrays since
+// we use full-text search instead of vector similarity.
+export async function generateEmbedding(_text: string): Promise<number[]> {
+  return [];
 }
 
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
-  const results: number[][] = [];
-
-  for (let i = 0; i < texts.length; i += 100) {
-    const batch = texts.slice(i, i + 100).map(t => t.slice(0, 8000));
-    const response = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: batch,
-    });
-    results.push(...response.data.map(d => d.embedding));
-  }
-
-  return results;
+  return texts.map(() => []);
 }

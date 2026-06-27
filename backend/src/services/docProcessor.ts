@@ -1,5 +1,13 @@
 import axios from 'axios';
 import FormData from 'form-data';
+import { describeImageBuffer } from './snwolley';
+
+const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+
+function isImageFile(fileName: string): boolean {
+  const ext = '.' + (fileName.split('.').pop()?.toLowerCase() ?? '');
+  return IMAGE_EXTS.has(ext);
+}
 
 export interface DoclingResult {
   markdown: string;
@@ -8,6 +16,36 @@ export interface DoclingResult {
 }
 
 export async function parseDocument(
+  fileBuffer: Buffer,
+  fileName: string
+): Promise<DoclingResult> {
+  // Route image files through Snwolley Vision for richer description
+  if (isImageFile(fileName)) {
+    return parseImageWithVision(fileBuffer, fileName);
+  }
+
+  // All other formats go to Docling
+  return parseWithDocling(fileBuffer, fileName);
+}
+
+async function parseImageWithVision(
+  fileBuffer: Buffer,
+  fileName: string
+): Promise<DoclingResult> {
+  const description = await describeImageBuffer(fileBuffer, fileName);
+
+  const markdown = description
+    ? `# Image Analysis: ${fileName}\n\n${description}`
+    : `# ${fileName}\n\n(No description returned from Vision API)`;
+
+  return {
+    markdown,
+    pages: [{ page_number: 1, text: description }],
+    metadata: { page_count: 1 },
+  };
+}
+
+async function parseWithDocling(
   fileBuffer: Buffer,
   fileName: string
 ): Promise<DoclingResult> {

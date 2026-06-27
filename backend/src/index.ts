@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 
 import documentsRouter from './routes/documents';
 import chatRouter from './routes/chat';
+import voiceRouter from './routes/voice';
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -33,6 +34,7 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/documents', documentsRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/voice', voiceRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);

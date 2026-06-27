@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BookOpen, Mail, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { Button } from '../../components/ui/Button';
+import { supabase } from '../../../lib/supabase';
+import { Button } from '../../../components/ui/Button';
 
 export default function RegisterPage() {
   const router = useRouter();

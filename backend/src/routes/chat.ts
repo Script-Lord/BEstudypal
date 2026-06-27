@@ -60,11 +60,13 @@ router.post('/:documentId/query', authenticate, async (req, res) => {
   );
   const history = historyResult.rows.reverse();
 
-  // 1. Embed question
+  // 1. Embed question (no-op when using full-text search)
   const queryEmbedding = await generateEmbedding(question);
 
-  // 2. Vector search
-  const relevantChunks = await searchSimilarChunks(queryEmbedding, documentId, authed.user.id, 5);
+  // 2. Full-text search for relevant chunks
+  const relevantChunks = await searchSimilarChunks(
+    queryEmbedding, documentId, authed.user.id, 5, question
+  );
 
   if (relevantChunks.length === 0) {
     res.setHeader('Content-Type', 'text/event-stream');
