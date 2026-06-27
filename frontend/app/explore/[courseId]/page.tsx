@@ -2,12 +2,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { BookOpen, Globe, FileText, Layers, Hash } from 'lucide-react';
+import { BookOpen, Globe, Layers } from 'lucide-react';
 import { api, PublicCourse } from '../../../lib/api';
 import { useCourseChat } from '../../../hooks/useCourseChat';
 import { AppShell } from '../../../components/layout/AppShell';
 import { ChatPanel } from '../../../components/layout/ChatPanel';
 import { StudioPanel } from '../../../components/layout/StudioPanel';
+import { SourcesPanel } from '../../../components/layout/SourcesPanel';
 
 const SUGGESTIONS = [
   'Summarize the key topics in this course',
@@ -80,50 +81,14 @@ export default function PublicCourseDetailPage() {
           </div>
         </div>
       }
-      studio={
-        <StudioPanel>
-          {course.documents.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-8 text-center">
-              <FileText className="w-7 h-7 text-ink-faint" />
-              <p className="text-xs text-ink-faint">No materials added yet</p>
-            </div>
-          ) : (
-            course.documents.map(doc => (
-              <div key={doc.id} className="flex items-center gap-2.5 px-2 py-2.5 rounded-xl hover:bg-bg-elevated transition-all">
-                <span className="w-8 h-8 rounded-lg bg-secondary-muted flex items-center justify-center shrink-0">
-                  <FileText className="w-3.5 h-3.5 text-secondary" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-ink truncate">{doc.name}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    {doc.page_count && (
-                      <span className="text-[11px] text-ink-faint flex items-center gap-0.5">
-                        <Layers className="w-2.5 h-2.5" />{doc.page_count}p
-                      </span>
-                    )}
-                    {doc.word_count && (
-                      <span className="text-[11px] text-ink-faint flex items-center gap-0.5">
-                        <Hash className="w-2.5 h-2.5" />{(doc.word_count / 1000).toFixed(1)}k
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-
-          <div className="mt-4 pt-4 border-t border-bg-border">
-            <p className="text-xs text-ink-faint mb-2">Want to create your own course?</p>
-            <button
-              type="button"
-              onClick={() => router.push('/register')}
-              className="w-full text-xs font-medium text-secondary border border-secondary/30 rounded-full py-2 hover:bg-secondary-muted transition-all"
-            >
-              Sign up free
-            </button>
-          </div>
-        </StudioPanel>
+      sources={
+        <SourcesPanel
+          documents={course.documents}
+          showWebSearch={false}
+          emptyHint="The course owner hasn't added materials yet"
+        />
       }
+      studio={<StudioPanel />}
     >
       <ChatPanel
         title="Chat"

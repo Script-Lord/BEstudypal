@@ -50,7 +50,7 @@ class GeminiProvider implements AIProvider {
       baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
     });
   }
-  private model = process.env.GEMINI_MODEL ?? 'gemini-2.0-flash';
+  private model = process.env.GEMINI_MODEL ?? 'gemini-2.5-flash';
 
   async chat(messages: ChatMessage[]): Promise<string> {
     const res = await this.client.chat.completions.create({ model: this.model, messages });

@@ -55,7 +55,7 @@ export default function LoginPage() {
       >
         <div className="flex items-center gap-2.5">
           <BookOpen className="w-6 h-6 text-accent" />
-          <span className="text-base font-semibold text-ink">StudyBuddy</span>
+          <span className="text-base font-semibold text-ink">StudyPal</span>
         </div>
 
         <div>
@@ -85,7 +85,7 @@ export default function LoginPage() {
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-6 lg:hidden">
               <BookOpen className="w-5 h-5 text-accent" />
-              <span className="text-sm font-semibold text-ink">StudyBuddy</span>
+              <span className="text-sm font-semibold text-ink">StudyPal</span>
             </div>
             <h2 className="text-2xl font-semibold text-ink">Sign in</h2>
             <p className="text-sm text-ink-muted mt-1">

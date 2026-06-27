@@ -2,8 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Plus, LogOut, X, Search, ChevronDown, Globe } from 'lucide-react';
-import { signOut } from '../../lib/auth';
+import { BookOpen, Plus, X, Search, ChevronDown } from 'lucide-react';
 import { useDocuments } from '../../hooks/useDocuments';
 import { useCourses } from '../../hooks/useCourses';
 import { useAuth } from '../../hooks/useAuth';
@@ -11,6 +10,7 @@ import { DocumentCard } from '../../components/DocumentCard';
 import { DocumentUpload } from '../../components/DocumentUpload';
 import { CourseCard } from '../../components/CourseCard';
 import { Button } from '../../components/ui/Button';
+import { AppShell } from '../../components/layout/AppShell';
 
 type Tab = 'courses' | 'documents';
 
@@ -22,7 +22,6 @@ export default function DashboardPage() {
 
   const [tab, setTab] = useState<Tab>('courses');
   const [showUpload, setShowUpload] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('created_at');
 
@@ -33,12 +32,6 @@ export default function DashboardPage() {
     const id = setInterval(refreshDocs, 3000);
     return () => clearInterval(id);
   }, [documents, refreshDocs]);
-
-  const handleSignOut = useCallback(async () => {
-    setSigningOut(true);
-    await signOut();
-    router.replace('/login');
-  }, [router]);
 
   const handleDocumentQueued = useCallback(() => {
     setShowUpload(false);
@@ -72,37 +65,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg-base">
-      {/* Nav */}
-      <nav className="sticky top-0 z-40 border-b border-bg-border bg-bg-base/90 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto px-5 flex items-center justify-between gap-4" style={{ height: 52 }}>
-          <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-accent" />
-            <span className="text-sm font-semibold text-ink">StudyBuddy</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.push('/explore')}
-              className="flex items-center gap-1.5 text-xs text-ink-faint hover:text-ink px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated transition-all"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span className="hidden sm:block">Explore</span>
-            </button>
-            <span className="hidden sm:block text-xs text-ink-faint truncate max-w-[160px]">{user?.email}</span>
-            <button
-              onClick={handleSignOut}
-              disabled={signingOut}
-              className="flex items-center gap-1.5 text-xs text-ink-faint hover:text-ink px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated transition-all disabled:opacity-40"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-3xl mx-auto px-5 py-8">
-        {/* Page header */}
-        <div className="flex items-center justify-between mb-6">
+    <AppShell
+      header={
+        <div className="shrink-0 px-4 py-2.5 flex items-center justify-between gap-3 border-b border-bg-border bg-bg-base">
           <div className="flex items-center gap-1 bg-bg-surface border border-bg-border rounded-lg p-1">
             {(['courses', 'documents'] as Tab[]).map(t => (
               <button
@@ -133,7 +98,10 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-
+      }
+    >
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-5 py-6">
         {/* Upload panel */}
         <AnimatePresence>
           {tab === 'documents' && showUpload && user && (
@@ -197,6 +165,7 @@ export default function DashboardPage() {
                     key={c.id}
                     course={c}
                     isOwner
+                    onOpen={id => router.push(`/courses/${id}`)}
                     onChat={id => router.push(`/courses/${id}`)}
                     onManage={id => router.push(`/courses/${id}`)}
                     onDelete={deleteCourse}
@@ -234,8 +203,9 @@ export default function DashboardPage() {
             </motion.div>
           )
         )}
-      </main>
-    </div>
+        </div>
+      </div>
+    </AppShell>
   );
 }
 

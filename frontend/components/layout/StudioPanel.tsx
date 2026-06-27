@@ -1,8 +1,9 @@
 'use client';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Brain, ChevronRight, FileText, Headphones, Layers,
-  LayoutTemplate, Map, PanelRight, Plus, Presentation, Table2,
+  Brain, ChevronRight, Headphones, Layers,
+  Map, PanelLeft, PanelRight, Plus, Presentation, Table2,
 } from 'lucide-react';
 
 const STUDIO_TOOLS = [
@@ -10,27 +11,54 @@ const STUDIO_TOOLS = [
   { label: 'Slide Deck', icon: Presentation, badge: 'BETA' },
   { label: 'Video Overview', icon: Layers },
   { label: 'Mind Map', icon: Map },
-  { label: 'Reports', icon: FileText },
-  { label: 'Flashcards', icon: LayoutTemplate },
   { label: 'Quiz', icon: Brain },
-  { label: 'Infographic', icon: Layers, badge: 'BETA' },
   { label: 'Data Table', icon: Table2 },
 ] as const;
 
 interface StudioPanelProps {
   children?: ReactNode;
   footerAction?: ReactNode;
+  defaultOpen?: boolean;
 }
 
-export function StudioPanel({ children, footerAction }: StudioPanelProps) {
+export function StudioPanel({ children, footerAction, defaultOpen = true }: StudioPanelProps) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  if (!open) {
+    return (
+      <aside className="w-12 shrink-0 bg-bg-surface border-l border-bg-border flex flex-col items-center py-3.5 rounded-l-2xl ml-2 my-2">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="w-7 h-7 rounded-lg flex items-center justify-center text-ink-faint hover:text-ink hover:bg-bg-elevated transition-all"
+          aria-label="Open studio panel"
+          title="Open studio panel"
+        >
+          <PanelLeft className="w-3.5 h-3.5" />
+        </button>
+        <span className="mt-3 text-[11px] font-medium text-ink-faint tracking-wide [writing-mode:vertical-rl] rotate-180">
+          Studio
+        </span>
+      </aside>
+    );
+  }
+
   return (
-    <aside className="w-[320px] shrink-0 bg-bg-surface border-l border-bg-border flex flex-col overflow-hidden rounded-l-2xl ml-2 my-2">
+    <motion.aside
+      initial={{ width: 0, opacity: 0 }}
+      animate={{ width: 320, opacity: 1 }}
+      exit={{ width: 0, opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className="shrink-0 bg-bg-surface border-l border-bg-border flex flex-col overflow-hidden rounded-l-2xl ml-2 my-2"
+    >
       <div className="flex items-center justify-between px-4 py-3.5 border-b border-bg-border shrink-0">
         <h2 className="text-sm font-medium text-ink">Studio</h2>
         <button
           type="button"
+          onClick={() => setOpen(false)}
           className="w-7 h-7 rounded-lg flex items-center justify-center text-ink-faint hover:text-ink hover:bg-bg-elevated transition-all"
-          aria-label="Toggle studio panel"
+          aria-label="Collapse studio panel"
+          title="Collapse studio panel"
         >
           <PanelRight className="w-3.5 h-3.5" />
         </button>
@@ -76,7 +104,7 @@ export function StudioPanel({ children, footerAction }: StudioPanelProps) {
           {footerAction}
         </div>
       )}
-    </aside>
+    </motion.aside>
   );
 }
 

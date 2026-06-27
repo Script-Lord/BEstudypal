@@ -111,7 +111,7 @@ export default function RootPage() {
         <div className="max-w-5xl mx-auto px-5 flex items-center justify-between" style={{ height: 52 }}>
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-accent" />
-            <span className="text-sm font-semibold text-ink">StudyBuddy</span>
+            <span className="text-sm font-semibold text-ink">StudyPal</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -149,7 +149,7 @@ export default function RootPage() {
               <span className="text-accent">anything.</span>
             </h1>
             <p className="text-base text-ink-muted max-w-xl mx-auto mb-8 leading-relaxed">
-              StudyBuddy turns course documents into an AI you can question.
+              StudyPal turns course documents into an AI you can question.
               Browse public courses and start chatting instantly — no sign-in required.
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">

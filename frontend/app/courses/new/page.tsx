@@ -6,8 +6,12 @@ import { ArrowLeft, BookOpen, Globe, Lock } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../hooks/useAuth';
 import { Button } from '../../../components/ui/Button';
+import { AppShell } from '../../../components/layout/AppShell';
 
-const LEVELS = [
+const LEVEL_SUGGESTIONS = [
+  'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6',
+  'JHS 1', 'JHS 2', 'JHS 3',
+  'SHS 1', 'SHS 2', 'SHS 3',
   'Level 100', 'Level 200', 'Level 300', 'Level 400',
   'Level 500', 'Level 600', 'Level 700',
 ];
@@ -18,7 +22,7 @@ export default function NewCoursePage() {
 
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
-  const [level, setLevel] = useState('Level 100');
+  const [level, setLevel] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,12 +30,12 @@ export default function NewCoursePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !code.trim()) return;
+    if (!title.trim() || !code.trim() || !level.trim()) return;
     setLoading(true);
     setError('');
 
     try {
-      const course = await api.createCourse({ title: title.trim(), code: code.trim().toUpperCase(), level, description: description.trim() || undefined, is_public: isPublic });
+      const course = await api.createCourse({ title: title.trim(), code: code.trim().toUpperCase(), level: level.trim(), description: description.trim() || undefined, is_public: isPublic });
       router.push(`/courses/${course.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create course');
@@ -46,9 +50,9 @@ export default function NewCoursePage() {
   );
 
   return (
-    <div className="min-h-dvh bg-bg-base">
-      <nav className="sticky top-0 z-40 border-b border-bg-border bg-bg-base/90 backdrop-blur-md">
-        <div className="max-w-xl mx-auto px-5 flex items-center gap-3" style={{ height: 52 }}>
+    <AppShell
+      header={
+        <div className="shrink-0 px-4 py-2.5 flex items-center gap-3 border-b border-bg-border bg-bg-base">
           <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1.5 text-xs text-ink-faint hover:text-ink px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated transition-all">
             <ArrowLeft className="w-3.5 h-3.5" />Back
           </button>
@@ -58,9 +62,10 @@ export default function NewCoursePage() {
             <span className="text-sm font-semibold text-ink">New Course</span>
           </div>
         </div>
-      </nav>
-
-      <main className="max-w-xl mx-auto px-5 py-10">
+      }
+    >
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-xl mx-auto px-5 py-10">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-xl font-semibold text-ink mb-1">Create a course</h1>
           <p className="text-sm text-ink-muted mb-8">Add course materials and let students ask the AI about them.</p>
@@ -94,13 +99,18 @@ export default function NewCoursePage() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-ink-muted uppercase tracking-wider">Level</label>
-                <select
+                <input
+                  type="text"
                   value={level}
                   onChange={e => setLevel(e.target.value)}
-                  className="w-full bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all cursor-pointer"
-                >
-                  {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
-                </select>
+                  list="level-suggestions"
+                  placeholder="e.g. SHS 1, JHS 2, Level 100"
+                  required
+                  className="w-full bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/50 transition-all"
+                />
+                <datalist id="level-suggestions">
+                  {LEVEL_SUGGESTIONS.map(l => <option key={l} value={l} />)}
+                </datalist>
               </div>
             </div>
 
@@ -163,7 +173,8 @@ export default function NewCoursePage() {
             </div>
           </form>
         </motion.div>
-      </main>
-    </div>
+        </div>
+      </div>
+    </AppShell>
   );
 }

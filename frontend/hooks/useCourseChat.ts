@@ -15,7 +15,7 @@ export function useCourseChat(courseId: string, isPublic = false) {
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const sendMessage = useCallback(async (question: string) => {
+  const sendMessage = useCallback(async (question: string, webSearch = false) => {
     if (streaming) return;
 
     const userMsg: CourseChatMsg = { id: `u-${Date.now()}`, role: 'user', content: question };
@@ -28,8 +28,8 @@ export function useCourseChat(courseId: string, isPublic = false) {
 
     try {
       const res = isPublic
-        ? await api.streamPublicCourseQuery(courseId, question)
-        : await api.streamCourseQuery(courseId, question);
+        ? await api.streamPublicCourseQuery(courseId, question, webSearch)
+        : await api.streamCourseQuery(courseId, question, webSearch);
 
       if (!res.ok || !res.body) throw new Error(`Request failed: ${res.status}`);
 

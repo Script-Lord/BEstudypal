@@ -3,7 +3,7 @@ import './globals.css';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 export const metadata: Metadata = {
-  title: 'StudyBuddy – Chat with your documents',
+  title: 'StudyPal – Chat with your documents',
   description: 'Upload any document and ask questions using AI.',
 };
 

@@ -7,6 +7,7 @@ interface Props {
   course: Course;
   isOwner?: boolean;
   showChatAlways?: boolean;
+  onOpen?: (id: string) => void;
   onChat?: (id: string) => void;
   onManage?: (id: string) => void;
   onDelete?: (id: string) => void;
@@ -22,7 +23,7 @@ const LEVEL_BADGE: Record<string, string> = {
   'Level 700': 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
 };
 
-export function CourseCard({ course, isOwner = false, showChatAlways = false, onChat, onManage, onDelete }: Props) {
+export function CourseCard({ course, isOwner = false, showChatAlways = false, onOpen, onChat, onManage, onDelete }: Props) {
   const levelStyle = LEVEL_BADGE[course.level] ?? 'text-ink-muted bg-bg-elevated border-bg-border';
   const docCount = Number(course.doc_count ?? 0);
 
@@ -31,7 +32,11 @@ export function CourseCard({ course, isOwner = false, showChatAlways = false, on
       layout
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group flex flex-col gap-3 p-5 rounded-2xl border border-bg-border bg-bg-surface hover:border-accent/30 hover:bg-bg-elevated/50 transition-all duration-200"
+      onClick={onOpen ? () => onOpen(course.id) : undefined}
+      role={onOpen ? 'button' : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onKeyDown={onOpen ? e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(course.id); } } : undefined}
+      className={`group flex flex-col gap-3 p-5 rounded-2xl border border-bg-border bg-bg-surface hover:border-accent/30 hover:bg-bg-elevated/50 transition-all duration-200${onOpen ? ' cursor-pointer' : ''}`}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
@@ -74,7 +79,7 @@ export function CourseCard({ course, isOwner = false, showChatAlways = false, on
         <div className={`flex items-center gap-0.5 transition-opacity ${showChatAlways ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
           {onChat && docCount > 0 && (
             <button
-              onClick={() => onChat(course.id)}
+              onClick={e => { e.stopPropagation(); onChat(course.id); }}
               className="flex items-center gap-1 text-xs text-ink-muted hover:text-accent px-2.5 py-1.5 rounded-lg hover:bg-accent/10 transition-all"
             >
               <MessageSquare className="w-3.5 h-3.5" />
@@ -83,7 +88,7 @@ export function CourseCard({ course, isOwner = false, showChatAlways = false, on
           )}
           {isOwner && onManage && (
             <button
-              onClick={() => onManage(course.id)}
+              onClick={e => { e.stopPropagation(); onManage(course.id); }}
               title="Manage"
               className="text-ink-faint hover:text-ink p-1.5 rounded-lg hover:bg-bg-elevated transition-all"
             >
@@ -92,7 +97,7 @@ export function CourseCard({ course, isOwner = false, showChatAlways = false, on
           )}
           {isOwner && onDelete && (
             <button
-              onClick={() => onDelete(course.id)}
+              onClick={e => { e.stopPropagation(); onDelete(course.id); }}
               title="Delete"
               className="text-ink-faint hover:text-status-failed p-1.5 rounded-lg hover:bg-status-failed/10 transition-all"
             >

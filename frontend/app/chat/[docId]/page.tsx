@@ -7,6 +7,7 @@ import { api, Document } from '../../../lib/api';
 import { ChatWindow } from '../../../components/ChatWindow';
 import { AppShell } from '../../../components/layout/AppShell';
 import { StudioPanel } from '../../../components/layout/StudioPanel';
+import { SourcesPanel } from '../../../components/layout/SourcesPanel';
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -80,19 +81,13 @@ export default function ChatPage() {
           </div>
         </div>
       }
-      studio={
-        <StudioPanel>
-          <div className="flex items-center gap-2.5 px-2 py-2.5 rounded-xl bg-bg-elevated/60 border border-bg-border">
-            <span className="w-8 h-8 rounded-lg bg-secondary-muted flex items-center justify-center shrink-0">
-              <FileText className="w-3.5 h-3.5 text-secondary" />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-ink truncate">{doc.name}</p>
-              <p className="text-[11px] text-ink-faint mt-0.5">Active document</p>
-            </div>
-          </div>
-        </StudioPanel>
+      sources={
+        <SourcesPanel
+          documents={[doc]}
+          showWebSearch={false}
+        />
       }
+      studio={<StudioPanel />}
     >
       <ChatWindow documentId={docId} documentName={doc.name} />
     </AppShell>

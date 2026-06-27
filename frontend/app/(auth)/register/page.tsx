@@ -88,7 +88,7 @@ export default function RegisterPage() {
       >
         <div className="flex items-center gap-2 mb-8">
           <BookOpen className="w-5 h-5 text-accent" />
-          <span className="text-sm font-semibold text-ink">StudyBuddy</span>
+          <span className="text-sm font-semibold text-ink">StudyPal</span>
         </div>
 
         <div className="mb-8">

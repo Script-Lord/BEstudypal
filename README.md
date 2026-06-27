@@ -1,4 +1,4 @@
-# StudyBuddy – AI Document Chat Platform
+# StudyPal – AI Document Chat Platform
 
 A full-stack RAG (Retrieval-Augmented Generation) platform. Upload any document (PDF, DOCX, PPTX, images) and chat with it using AI.
 
