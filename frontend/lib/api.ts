@@ -208,4 +208,21 @@ export const api = {
   async streamQuery(documentId: string, question: string, sessionId?: string): Promise<Response> {
     return this.streamDocumentQuery(documentId, question, sessionId);
   },
+
+  // ── Voice (STT via Snwolley on backend) ─────────────────────────────────────
+  async transcribeAudio(audio: Blob, filename = 'audio.webm'): Promise<{ text: string }> {
+    const token = await getAuthToken();
+    const form = new FormData();
+    form.append('audio', audio, filename);
+    const res = await fetch(`${BASE_URL}/api/voice/stt`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+    }
+    return res.json() as Promise<{ text: string }>;
+  },
 };

@@ -219,6 +219,7 @@ export default function CourseDetailPage() {
         sourceCount={sourceCount}
         webSearch={webSearch}
         onToggleWebSearch={setWebSearch}
+        onVoiceMessage={text => sendMessage(text, webSearch)}
         textareaRef={textareaRef}
         bottomRef={bottomRef}
       />

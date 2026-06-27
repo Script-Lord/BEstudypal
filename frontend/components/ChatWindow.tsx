@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, RotateCcw, AlertCircle } from 'lucide-react';
+import { Mic, Send, RotateCcw, AlertCircle } from 'lucide-react';
 import { useChat } from '../hooks/useChat';
+import { useVoiceInput } from '../hooks/useVoiceInput';
 import { MessageBubble } from './MessageBubble';
 
 interface Props {
@@ -19,6 +20,7 @@ const SUGGESTIONS = [
 
 export function ChatWindow({ documentId, documentName }: Props) {
   const { messages, streaming, error, sendMessage, clearChat } = useChat(documentId);
+  const { recording, transcribing, error: voiceError, toggleRecording, clearError } = useVoiceInput();
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -46,6 +48,12 @@ export function ChatWindow({ documentId, documentName }: Props) {
     setInput(e.target.value);
     e.target.style.height = 'auto';
     e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+  };
+
+  const handleVoice = () => {
+    if (streaming || recording || transcribing) return;
+    clearError();
+    toggleRecording(text => sendMessage(text));
   };
 
   const isEmpty = messages.length === 0;
@@ -113,16 +121,16 @@ export function ChatWindow({ documentId, documentName }: Props) {
       </div>
 
       {/* Error */}
-      {error && (
+      {(error || voiceError) && (
         <div className="mx-6 mb-2 flex items-center gap-2 text-xs text-status-failed bg-status-failed/10 border border-status-failed/20 rounded-lg px-3 py-2">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-          {error}
+          {voiceError ?? error}
         </div>
       )}
 
       {/* Input */}
       <div className="shrink-0 px-6 pb-6 pt-2">
-        <div className="flex items-end gap-3 input-surface px-4 py-3">
+        <div className="relative input-surface px-4 py-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -131,13 +139,31 @@ export function ChatWindow({ documentId, documentName }: Props) {
             placeholder="Ask a question..."
             rows={1}
             disabled={streaming}
-            className="flex-1 bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50"
+            className="w-full bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50 pr-24"
             style={{ minHeight: '24px', maxHeight: '160px' }}
           />
           <button
+            type="button"
+            onClick={handleVoice}
+            disabled={streaming || recording || transcribing}
+            title={recording ? 'Stop and send' : transcribing ? 'Transcribing…' : 'Record voice message'}
+            aria-label={recording ? 'Stop recording' : 'Record voice message'}
+            className={`absolute right-12 bottom-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
+              recording
+                ? 'bg-status-failed text-white animate-pulse'
+                : 'text-ink-faint hover:text-accent hover:bg-accent-muted/40'
+            }`}
+          >
+            {transcribing ? (
+              <span className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Mic className="w-4 h-4" />
+            )}
+          </button>
+          <button
             onClick={handleSend}
             disabled={!input.trim() || streaming}
-            className="shrink-0 w-8 h-8 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150 shadow-glow"
+            className="absolute right-2 bottom-2.5 w-9 h-9 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all duration-150 shadow-glow"
           >
             {streaming ? (
               <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

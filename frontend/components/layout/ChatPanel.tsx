@@ -1,8 +1,9 @@
 'use client';
 import { ReactNode, RefObject } from 'react';
-import { AlertCircle, Globe, MoreHorizontal, RotateCcw, Send, SlidersHorizontal } from 'lucide-react';
+import { AlertCircle, Globe, Mic, MoreHorizontal, RotateCcw, Send, SlidersHorizontal } from 'lucide-react';
 import { MessageBubble } from '../MessageBubble';
 import { CourseChatMsg } from '../../hooks/useCourseChat';
+import { useVoiceInput } from '../../hooks/useVoiceInput';
 
 interface ChatPanelProps {
   title?: string;
@@ -22,6 +23,7 @@ interface ChatPanelProps {
   sourceCount?: number;
   webSearch?: boolean;
   onToggleWebSearch?: (value: boolean) => void;
+  onVoiceMessage?: (text: string) => void;
   textareaRef?: RefObject<HTMLTextAreaElement | null>;
   bottomRef?: RefObject<HTMLDivElement | null>;
 }
@@ -44,9 +46,11 @@ export function ChatPanel({
   sourceCount,
   webSearch = false,
   onToggleWebSearch,
+  onVoiceMessage,
   textareaRef,
   bottomRef,
 }: ChatPanelProps) {
+  const { recording, transcribing, error: voiceError, toggleRecording, clearError } = useVoiceInput();
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -58,6 +62,16 @@ export function ChatPanel({
     onInputChange(e.target.value);
     e.target.style.height = 'auto';
     e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+  };
+
+  const inputBottom = onToggleWebSearch ? 'bottom-2' : 'bottom-2.5';
+  const voiceBusy = recording || transcribing;
+  const voiceDisabled = disabled || streaming || voiceBusy || !onVoiceMessage;
+
+  const handleVoice = () => {
+    if (voiceDisabled || !onVoiceMessage) return;
+    clearError();
+    toggleRecording(onVoiceMessage);
   };
 
   return (
@@ -133,10 +147,10 @@ export function ChatPanel({
         <div ref={bottomRef} />
       </div>
 
-      {error && (
+      {(error || voiceError) && (
         <div className="mx-3 sm:mx-5 mb-2 flex items-center gap-2 text-xs text-status-failed bg-status-failed/10 border border-status-failed/20 rounded-lg px-3 py-2">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-          {error}
+          {voiceError ?? error}
         </div>
       )}
 
@@ -150,7 +164,7 @@ export function ChatPanel({
             placeholder={placeholder}
             rows={1}
             disabled={disabled || streaming}
-            className="w-full bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50 pr-12"
+            className="w-full bg-transparent text-sm text-ink placeholder:text-ink-faint resize-none outline-none leading-relaxed disabled:opacity-50 pr-24"
             style={{ minHeight: 24, maxHeight: 160 }}
           />
 
@@ -189,21 +203,40 @@ export function ChatPanel({
               <span className="text-[11px] text-ink-faint hidden sm:block">
                 {webSearch ? 'Expands beyond your sources' : 'Stays within your sources'}
               </span>
+              {sourceCount != null && sourceCount > 0 && (
+                <span className="text-[11px] text-ink-faint hidden sm:inline ml-auto">
+                  {sourceCount} sources
+                </span>
+              )}
             </div>
           )}
 
-          <div className="absolute right-12 bottom-3 hidden sm:flex items-center gap-2 pointer-events-none">
-            {sourceCount != null && sourceCount > 0 && (
-              <span className="text-[11px] text-ink-faint">{sourceCount} sources</span>
-            )}
-          </div>
+          {onVoiceMessage && (
+            <button
+              type="button"
+              onClick={handleVoice}
+              disabled={voiceDisabled}
+              title={recording ? 'Stop and send' : transcribing ? 'Transcribing…' : 'Record voice message'}
+              aria-label={recording ? 'Stop recording' : 'Record voice message'}
+              className={`absolute right-12 w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed ${inputBottom} ${
+                recording
+                  ? 'bg-status-failed text-white animate-pulse'
+                  : 'text-ink-faint hover:text-accent hover:bg-accent-muted/40'
+              }`}
+            >
+              {transcribing ? (
+                <span className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Mic className="w-4 h-4" />
+              )}
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onSend}
             disabled={!input.trim() || streaming || disabled}
-            className={`absolute right-2 w-9 h-9 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-glow ${
-              onToggleWebSearch ? 'bottom-2' : 'bottom-2.5'
-            }`}
+            className={`absolute right-2 w-9 h-9 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-glow ${inputBottom}`}
           >
             {streaming ? (
               <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

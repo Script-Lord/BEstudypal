@@ -14,7 +14,7 @@ const upload = multer({
 // POST /api/voice/stt
 // Body: multipart/form-data  { audio: <blob> }
 // Returns: { text: string }
-router.post('/stt', authenticate, upload.single('audio'), async (req, res) => {
+router.post('/stt', upload.single('audio'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No audio file provided (field name: audio)' });
   }
