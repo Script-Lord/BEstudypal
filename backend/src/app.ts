@@ -1,0 +1,85 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+
+import documentsRouter from './routes/documents';
+import chatRouter from './routes/chat';
+import voiceRouter from './routes/voice';
+import coursesRouter from './routes/courses';
+import publicRouter from './routes/public';
+
+export function createApp() {
+  const app = express();
+
+  if (process.env.NODE_ENV === 'production' || process.env.TRUST_PROXY === 'true') {
+    app.set('trust proxy', 1);
+  }
+
+  const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+
+  app.use(helmet());
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || isNetlifyOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, allowedOrigins[0]);
+      }
+    },
+    credentials: true,
+  }));
+  app.use(morgan('combined'));
+  app.use(express.json({ limit: '10mb' }));
+
+  const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 15 * 60 * 1000);
+  const readMax = Number(process.env.RATE_LIMIT_READ_MAX ?? 600);
+  const writeMax = Number(process.env.RATE_LIMIT_WRITE_MAX ?? 80);
+  const skipRateLimit = process.env.NODE_ENV !== 'production' && process.env.RATE_LIMIT !== 'true';
+
+  const readLimiter = rateLimit({
+    windowMs: rateLimitWindowMs,
+    max: readMax,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => skipRateLimit || req.method !== 'GET',
+    message: { error: 'Too many requests — please wait a moment and try again.' },
+  });
+
+  const writeLimiter = rateLimit({
+    windowMs: rateLimitWindowMs,
+    max: writeMax,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => skipRateLimit || req.method === 'GET',
+    message: { error: 'Too many requests — please wait a moment and try again.' },
+  });
+
+  app.use('/api/', readLimiter);
+  app.use('/api/', writeLimiter);
+
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString(), runtime: process.env.NETLIFY ? 'netlify' : 'node' });
+  });
+
+  app.use('/api/documents', documentsRouter);
+  app.use('/api/chat', chatRouter);
+  app.use('/api/voice', voiceRouter);
+  app.use('/api/courses', coursesRouter);
+  app.use('/api/public', publicRouter);
+
+  app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Internal server error' });
+  });
+
+  return app;
+}
+
+function isNetlifyOrigin(origin: string): boolean {
+  return /\.netlify\.app$/i.test(origin) || origin.includes('localhost:8888');
+}

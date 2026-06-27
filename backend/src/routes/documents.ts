@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { authenticate, AuthedRequest } from '../middleware/authenticate';
 import { pool } from '../db/client';
-import { documentQueue } from '../queue/jobQueue';
+import { enqueueDocumentProcessing } from '../services/enqueueDocument';
 import { deleteFromStorage, uploadTextToStorage } from '../services/storage';
 import { fetchWebSource } from '../services/webSource';
 import { removeChunks } from '../services/vectorSearch';
@@ -51,7 +51,7 @@ router.post('/', authenticate, async (req, res) => {
     [documentId, authed.user.id, fileName, fileType, storagePath, courseId ?? null]
   );
 
-  await documentQueue.add('process', {
+  await enqueueDocumentProcessing({
     documentId,
     userId: authed.user.id,
     storagePath,
@@ -102,7 +102,7 @@ router.post('/web-source', authenticate, async (req, res) => {
     [documentId, authed.user.id, fileName, 'text/markdown', storagePath, courseId]
   );
 
-  await documentQueue.add('process', {
+  await enqueueDocumentProcessing({
     documentId,
     userId: authed.user.id,
     storagePath,

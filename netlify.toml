@@ -1,0 +1,36 @@
+[build]
+  base = "frontend"
+  command = "npm ci --prefix ../backend && npm ci --prefix ../netlify/functions && npm ci && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NETLIFY = "true"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  directory = "../netlify/functions"
+  node_bundler = "esbuild"
+  included_files = ["../backend/src/**"]
+  external_node_modules = ["pdf-parse", "firebase-admin"]
+
+[functions.api]
+  timeout = 26
+
+[functions.process-document-background]
+  timeout = 900
+  background = true
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/api/health"
+  status = 200
+  force = true
