@@ -2,24 +2,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Globe, Lock, Settings, Trash2 } from 'lucide-react';
+import { BookOpen, Globe, Lock, Trash2 } from 'lucide-react';
 import { useAccount } from '../../../hooks/useAccount';
 import { ShareCourseButton } from '../../../components/ShareCourseButton';
 import { getPublicCourseUrl } from '../../../lib/courseLinks';
 import { useCourseChat } from '../../../hooks/useCourseChat';
 import { api, Course, Document } from '../../../lib/api';
 import { DocumentUpload } from '../../../components/DocumentUpload';
-import { Button } from '../../../components/ui/Button';
 import { AppShell } from '../../../components/layout/AppShell';
 import { ChatPanel } from '../../../components/layout/ChatPanel';
 import { StudioPanel } from '../../../components/layout/StudioPanel';
 import { SourcesPanel } from '../../../components/layout/SourcesPanel';
-
-const LEVEL_SUGGESTIONS = [
-  'Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','Primary 6',
-  'JHS 1','JHS 2','JHS 3','SHS 1','SHS 2','SHS 3',
-  'Level 100','Level 200','Level 300','Level 400','Level 500','Level 600','Level 700',
-];
 
 const SUGGESTIONS = [
   'Summarize the key topics',
@@ -38,9 +31,6 @@ export default function CourseDetailPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [editData, setEditData] = useState({ title: '', code: '', level: '', description: '', is_public: false });
-  const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const { messages, streaming, error: chatError, sendMessage, clearChat } = useCourseChat(courseId, false);
@@ -56,7 +46,6 @@ export default function CourseDetailPage() {
         const [c, docs] = await Promise.all([api.getCourse(courseId), api.getCourseDocuments(courseId)]);
         setCourse(c);
         setDocuments(docs);
-        setEditData({ title: c.title, code: c.code, level: c.level, description: c.description ?? '', is_public: c.is_public });
         setLoading(false);
         return;
       } catch {
@@ -79,23 +68,11 @@ export default function CourseDetailPage() {
   useEffect(() => {
     const hasActive = documents.some(d => d.status === 'pending' || d.status === 'processing');
     if (!hasActive) return;
-    const id = setInterval(() => api.getCourseDocuments(courseId).then(setDocuments).catch(() => {}), 3000);
+    const id = setInterval(() => api.getCourseDocuments(courseId).then(setDocuments).catch(() => {}), 8000);
     return () => clearInterval(id);
   }, [documents, courseId]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
-
-  const handleSave = async () => {
-    if (!course) return;
-    setSaving(true);
-    try {
-      const updated = await api.updateCourse(courseId, editData);
-      setCourse(updated);
-      setEditing(false);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (!confirm('Delete this course? Documents will remain in your library.')) return;
@@ -120,19 +97,13 @@ export default function CourseDetailPage() {
   const togglePublic = async () => {
     if (!course) return;
     const updated = await api.updateCourse(courseId, { is_public: !course.is_public }).catch(() => null);
-    if (updated) {
-      setCourse(updated);
-      setEditData(p => ({ ...p, is_public: updated.is_public }));
-    }
+    if (updated) setCourse(updated);
   };
 
   const makePublic = async () => {
     if (!course || course.is_public) return;
     const updated = await api.updateCourse(courseId, { is_public: true }).catch(() => null);
-    if (updated) {
-      setCourse(updated);
-      setEditData(p => ({ ...p, is_public: true }));
-    }
+    if (updated) setCourse(updated);
   };
 
   if (authLoading || loading) return (
@@ -176,13 +147,6 @@ export default function CourseDetailPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setEditing(v => !v)}
-                className="text-ink-faint hover:text-ink p-1.5 rounded-lg hover:bg-bg-elevated transition-all"
-              >
-                <Settings className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
                 onClick={handleDelete}
                 disabled={deleting}
                 className="text-ink-faint hover:text-status-failed p-1.5 rounded-lg hover:bg-status-failed/10 transition-all disabled:opacity-40"
@@ -202,30 +166,6 @@ export default function CourseDetailPage() {
             </div>
           )}
 
-          <AnimatePresence>
-            {editing && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden border-b border-bg-border bg-bg-surface shrink-0"
-              >
-                <div className="px-4 py-4 grid sm:grid-cols-4 gap-3">
-                  <input value={editData.title} onChange={e => setEditData(p => ({ ...p, title: e.target.value }))} placeholder="Title" className="sm:col-span-2 bg-bg-elevated border border-bg-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-secondary/40" />
-                  <input value={editData.code} onChange={e => setEditData(p => ({ ...p, code: e.target.value }))} placeholder="Code" className="bg-bg-elevated border border-bg-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-secondary/40" />
-                  <input value={editData.level} onChange={e => setEditData(p => ({ ...p, level: e.target.value }))} list="level-suggestions" placeholder="Level (e.g. SHS 1)" className="bg-bg-elevated border border-bg-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-secondary/40" />
-                  <datalist id="level-suggestions">
-                    {LEVEL_SUGGESTIONS.map(l => <option key={l} value={l} />)}
-                  </datalist>
-                  <input value={editData.description} onChange={e => setEditData(p => ({ ...p, description: e.target.value }))} placeholder="Description (optional)" className="sm:col-span-3 bg-bg-elevated border border-bg-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-secondary/40" />
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" loading={saving} onClick={handleSave}>Save</Button>
-                    <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>Cancel</Button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </>
       }
       sources={

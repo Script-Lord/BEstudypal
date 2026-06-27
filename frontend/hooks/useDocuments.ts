@@ -7,15 +7,17 @@ export function useDocuments() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (opts?: { silent?: boolean }) => {
     try {
-      setError(null);
+      if (!opts?.silent) setError(null);
       const docs = await api.listDocuments();
       setDocuments(docs);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load documents');
+      if (!opts?.silent) {
+        setError(err instanceof Error ? err.message : 'Failed to load documents');
+      }
     } finally {
-      setLoading(false);
+      if (!opts?.silent) setLoading(false);
     }
   }, []);
 
@@ -47,7 +49,7 @@ export function useDocumentStatus(docId: string, initialStatus: string) {
       } catch {
         // Ignore transient errors
       }
-    }, 2000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [docId, status]);

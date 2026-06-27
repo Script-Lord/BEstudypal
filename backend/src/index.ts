@@ -14,6 +14,11 @@ import publicRouter from './routes/public';
 const app = express();
 const PORT = process.env.PORT ?? 3001;
 
+// Required behind Cloud Run / reverse proxies so rate limits use the client IP, not the proxy.
+if (process.env.NODE_ENV === 'production' || process.env.TRUST_PROXY === 'true') {
+  app.set('trust proxy', 1);
+}
+
 app.use(helmet());
 app.use(cors({
   origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
@@ -22,13 +27,31 @@ app.use(cors({
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 15 * 60 * 1000);
+const readMax = Number(process.env.RATE_LIMIT_READ_MAX ?? 600);
+const writeMax = Number(process.env.RATE_LIMIT_WRITE_MAX ?? 80);
+const skipRateLimit = process.env.NODE_ENV !== 'production' && process.env.RATE_LIMIT !== 'true';
+
+const readLimiter = rateLimit({
+  windowMs: rateLimitWindowMs,
+  max: readMax,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: req => skipRateLimit || req.method !== 'GET',
+  message: { error: 'Too many requests — please wait a moment and try again.' },
 });
-app.use('/api/', limiter);
+
+const writeLimiter = rateLimit({
+  windowMs: rateLimitWindowMs,
+  max: writeMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: req => skipRateLimit || req.method === 'GET',
+  message: { error: 'Too many requests — please wait a moment and try again.' },
+});
+
+app.use('/api/', readLimiter);
+app.use('/api/', writeLimiter);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

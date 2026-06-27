@@ -74,7 +74,11 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+    const message = (body as { error?: string }).error;
+    if (res.status === 429) {
+      throw new Error(message ?? 'Too many requests — please wait a moment and try again.');
+    }
+    throw new Error(message ?? `HTTP ${res.status}`);
   }
   return res.json() as Promise<T>;
 }
@@ -86,7 +90,11 @@ async function publicRequest<T>(path: string, init: RequestInit = {}): Promise<T
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+    const message = (body as { error?: string }).error;
+    if (res.status === 429) {
+      throw new Error(message ?? 'Too many requests — please wait a moment and try again.');
+    }
+    throw new Error(message ?? `HTTP ${res.status}`);
   }
   return res.json() as Promise<T>;
 }

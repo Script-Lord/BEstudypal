@@ -29,7 +29,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const hasActive = documents.some(d => d.status === 'pending' || d.status === 'processing');
     if (!hasActive) return;
-    const id = setInterval(refreshDocs, 3000);
+    const id = setInterval(() => refreshDocs({ silent: true }), 8000);
     return () => clearInterval(id);
   }, [documents, refreshDocs]);
 

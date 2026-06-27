@@ -38,12 +38,12 @@ const worker = new Worker<DocumentJobData>(
     await job.updateProgress(10);
     const fileBuffer = await downloadFromStorage(storagePath);
 
-    // 2. Parse with Docling
+    // 2. Parse (officeparser locally, Docling as fallback)
     await job.updateProgress(20);
     const { markdown, pages } = await parseDocument(fileBuffer, fileName);
 
     if (!markdown || markdown.trim().length === 0) {
-      throw new Error('Docling returned empty content');
+      throw new Error('Document parser returned empty content');
     }
 
     // 3. Chunk
